@@ -1,76 +1,43 @@
 package local;
 
+import se.lth.cs.cameraproxy.Axis211A;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-import se.lth.cs.cameraproxy.Axis211A;
-
 public class CameraListener {
 	private InputStream inputStream;
-	private byte[] jpegData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
-	
-	public CameraListener() {
-		
+
+	public CameraListener(String url, int port) {
 		try {
 			inputStream = (new Socket("localhost", 6077)).getInputStream();
-			String result = "";
-			
-			while (true) {
-				int bytesRead = 0;
-				int bytesLeft = jpegData.length;
-				int status;
-				
-				do {
-					status = inputStream.read(jpegData, bytesRead, bytesLeft);
-					
-					//System.out.println(bytesLeft);
-					if (status > 0) {
-						System.out.println(jpegData.length);
-						bytesRead += status;
-						bytesLeft -= status;
-					}
-				} while (status >= 0);
-				
-				//System.out.println("Status: " + status);
-				
-				if (bytesRead > 0) {
-					System.out.println("Received image data (" + bytesRead + " bytes).");
-					for (byte b : jpegData)
-						System.out.print("[" + b + "] ");
-				}
-			}
-			
-			/*while(true) {
-				
-				System.out.println("Begin read");
-				inputStream.read(new byte[11], 0, 11);
-				System.out.println("End read");
-			}*/
+            fetchJPEG();
 		} catch (IOException e) {
-			System.out.println("Error in connect: ");
+			System.out.println("Communication error with server: " + url + ":" + port + ".");
 			e.printStackTrace();
 		}
-	}
-	
-	
-	/*private String getLine() throws IOException {
-		boolean done = false;
-		String result = "";
-		
-		while (!done) {
-			int ch = inputStream.read();
-			if (ch <= 0 || ch == 10) {
-				done = true;
-			} else if (ch >= ' ') {
-				result += (char) ch;
-			}
-		}
-		
-		return result;
-	}*/
-	
+    }
+
+    private void fetchJPEG() throws IOException {
+        byte[] receivedJPEGData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
+        int bytesReceived = 0;
+
+        while (true) {
+            bytesReceived = inputStream.read(receivedJPEGData, 0, Axis211A.IMAGE_BUFFER_SIZE);
+
+            if (bytesReceived > 0) {
+                System.out.println("Bytes received: " + bytesReceived);
+                byte[] jpeg = new byte[bytesReceived];
+                System.arraycopy(receivedJPEGData, 0, jpeg, 0, bytesReceived);
+
+                for (byte b : jpeg) {
+                    System.out.print(b + " ");
+                }
+            }
+        }
+    }
+
 	public static void main(String[] args) {
-		new CameraListener();
+		new CameraListener("localhost", 6077);
 	}
 }

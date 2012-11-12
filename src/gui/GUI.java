@@ -10,7 +10,7 @@ public class GUI {
 	public GUI() {
 		
 		JFrame frame = new JFrame("Video Surveillance");
-		frame.setLayout(new BorderLayout());
+		frame.getContentPane().setLayout(new BorderLayout());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel east = new JPanel();
@@ -49,9 +49,9 @@ public class GUI {
 		north.add(asynchron);
 		
 		
-		frame.add(north,BorderLayout.NORTH);
-		frame.add(east,BorderLayout.EAST);
-		frame.add(west,BorderLayout.WEST);
+		frame.getContentPane().add(north,BorderLayout.NORTH);
+		frame.getContentPane().add(east,BorderLayout.EAST);
+		frame.getContentPane().add(west,BorderLayout.WEST);
 		
 		frame.pack();
 		frame.setVisible(true);

@@ -11,12 +11,12 @@ public class CameraListener extends Thread {
 	private InputStream inputStream;
     private String url;
     private int port, id;
-    private ClientMonitor monitor;
+    private ClientMonitor clientMonitor;
 
-	public CameraListener(String url, int port, int id, ClientMonitor monitor) {
+	public CameraListener(String url, int port, int id, ClientMonitor clientMonitor) {
 		this.url = url;
         this.port = port;
-        this.monitor = monitor;
+        this.clientMonitor = clientMonitor;
         this.id = id;
     }
 
@@ -41,7 +41,7 @@ public class CameraListener extends Thread {
                 byte[] jpeg = new byte[bytesReceived];
                 System.arraycopy(receivedJPEGData, 0, jpeg, 0, bytesReceived);
                 long timeStamp = 1000L*(((jpeg[25]<0?256+jpeg[25]:jpeg[25])<<24)+((jpeg[26]<0?256+jpeg[26]:jpeg[26])<<16)+((jpeg[27]<0?256+jpeg[27]:jpeg[27])<<8)+(jpeg[28]<0?256+jpeg[28]:jpeg[28]))+10L*(jpeg[29]<0?256+jpeg[29]:jpeg[29]);
-                monitor.storeJPEG(id, new JPEG(jpeg, timeStamp));
+                clientMonitor.storeJPEG(id, new JPEG(jpeg, timeStamp));
             }
         }
     }

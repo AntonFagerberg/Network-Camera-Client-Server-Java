@@ -42,6 +42,7 @@ public class PictureSender extends Thread {
 		int length;
 		byte[] jpegData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
 
+
         while (true) {
             if (motionDetector.detect()) {
                 monitor.setMovie();

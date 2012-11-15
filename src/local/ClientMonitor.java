@@ -10,15 +10,13 @@ public class ClientMonitor {
         new LinkedList<JPEG>()
     };
 
-    private boolean idle = false;
-
     public synchronized void storeJPEG(int camera, JPEG jpeg) {
         queues[camera].addLast(jpeg);
         notifyAll();
     }
 
     public synchronized JPEG getJPEG(int camera) {
-        while (queues[camera].peekFirst() != null) {
+        while (queues[camera].peekFirst() == null) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -27,17 +25,5 @@ public class ClientMonitor {
         }
 
         return (JPEG) queues[camera].removeFirst();
-    }
-
-    public synchronized void setMovie() {
-        idle = false;
-    }
-
-    public synchronized void setIdle() {
-        idle = true;
-    }
-
-    public synchronized boolean isIdle() {
-        return idle;
     }
 }

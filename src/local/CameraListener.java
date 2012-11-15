@@ -1,21 +1,32 @@
 package local;
 
+import common.JPEG;
 import se.lth.cs.cameraproxy.Axis211A;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-public class CameraListener {
+public class CameraListener extends Thread {
 	private InputStream inputStream;
+    private String url;
+    private int port, id;
+    private Monitor monitor;
 
-	public CameraListener(String url, int port) {
-		try {
-			inputStream = (new Socket("localhost", 6077)).getInputStream();
+	public CameraListener(String url, int port, int id, Monitor monitor) {
+		this.url = url;
+        this.port = port;
+        this.monitor = monitor;
+        this.id = id;
+    }
+
+    public void run() {
+        try {
+            inputStream = (new Socket(url, port)).getInputStream();
             fetchJPEG();
-		} catch (IOException e) {
-			System.out.println("Communication error with server: " + url + ":" + port + ".");
-			e.printStackTrace();
-		}
+        } catch (IOException e) {
+            System.out.println("Communication error with server: " + url + ":" + port + ".");
+            e.printStackTrace();
+        }
     }
 
     private void fetchJPEG() throws IOException {
@@ -26,18 +37,11 @@ public class CameraListener {
             bytesReceived = inputStream.read(receivedJPEGData, 0, Axis211A.IMAGE_BUFFER_SIZE);
 
             if (bytesReceived > 0) {
-                System.out.println("Bytes received: " + bytesReceived);
                 byte[] jpeg = new byte[bytesReceived];
                 System.arraycopy(receivedJPEGData, 0, jpeg, 0, bytesReceived);
-
-                for (byte b : jpeg) {
-                    System.out.print(b + " ");
-                }
+                long timeStamp = 1000L*(((jpeg[25]<0?256+jpeg[25]:jpeg[25])<<24)+((jpeg[26]<0?256+jpeg[26]:jpeg[26])<<16)+((jpeg[27]<0?256+jpeg[27]:jpeg[27])<<8)+(jpeg[28]<0?256+jpeg[28]:jpeg[28]))+10L*(jpeg[29]<0?256+jpeg[29]:jpeg[29]);
+                monitor.storeJPEG(id, new JPEG(jpeg, timeStamp));
             }
         }
     }
-
-	public static void main(String[] args) {
-		new CameraListener("localhost", 6077);
-	}
 }

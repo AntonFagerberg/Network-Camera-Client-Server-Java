@@ -96,7 +96,7 @@ class GUI extends JFrame {
                 responseLine = getLine(is);
             } while (!(responseLine.equals("")));
 
-            // Now load the JPEG image.
+            // Now load the common.JPEG image.
             int bufferSize = jpeg.length;
             int bytesRead  = 0;
             int bytesLeft  = bufferSize;

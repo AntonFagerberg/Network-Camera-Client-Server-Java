@@ -6,16 +6,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 
-public class PictureSender {
+public class PictureSender extends Thread {
 	private final static int port = 6077;
 	private final Axis211A camera = new Axis211A();
     private OutputStream outputStream;
 
-    public PictureSender() {
+    public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             outputStream = serverSocket.accept().getOutputStream();
-            System.out.print("Started server at port: " + port + ".");
+            System.out.println("Started server at port: " + port + ".");
 
             if (camera.connect()){
                 System.out.println("Connected to camera.");
@@ -35,15 +35,9 @@ public class PictureSender {
 		int length;
 		byte[] jpegData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
 
-//        while (true) {
-        for (int i = 0; i < 5; i++) {
+        while (true) {
             length = camera.getJPEG(jpegData, 0);
-            System.out.println("Sending: " + length + ". First two bytes: " + jpegData[0] + " " + jpegData[1] + ". Last two bytes: " + jpegData[length - 2] + " " + jpegData[length - 1] + ".");
             outputStream.write(jpegData, 0, length);
         }
-	}
-	
-	public static void main(String[] args) {
-		new PictureSender();
 	}
 }

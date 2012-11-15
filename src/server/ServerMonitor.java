@@ -5,43 +5,23 @@ import se.lth.cs.fakecamera.Axis211A;
 public class ServerMonitor {
     private byte[] JPEGData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
     private int length = -1;
-    private final static long IDLE_WAIT = 5000;
-    private boolean modeMovie = false,
-                    transferredModeMovie = false;
+    private final static long IDLE_WAIT_TIME = 5000;
+    private final static boolean
+        MOVIE = false,
+        IDLE = true;
+    private boolean
+        mode = false,
+        transferMode = IDLE;
 
     public synchronized void storeJPEGData(byte[] JPEGData, int length) {
         this.length = length;
         this.JPEGData = JPEGData;
     }
 
-    public synchronized void setMovie() {
-        System.out.println("Movie!");
-        modeMovie = true;
-        transferredModeMovie = true;
-        notifyAll();
-    }
-
-    public synchronized void unsetMovie() {
-        System.out.println("Idle!");
-        modeMovie = false;
-    }
-
-    public synchronized void isMovie() {
-        while (!transferredModeMovie) {
+    public synchronized int fetchJPEGData(byte[] JPEGData) {
+        if (mode == IDLE) {
             try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        transferredModeMovie = true;
-    }
-
-    public synchronized int fillData(byte[] JPEGData) {
-        if (!modeMovie || length < 0) {
-            try {
-                wait(IDLE_WAIT);
+                wait(IDLE_WAIT_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -49,5 +29,27 @@ public class ServerMonitor {
 
         System.arraycopy(this.JPEGData, 0, JPEGData, 0, JPEGData.length);
         return length;
+    }
+
+    public synchronized void setMovie() {
+        mode = MOVIE;
+        transferMode = MOVIE;
+        notify();
+    }
+
+    public synchronized void unsetMovie() {
+        mode = IDLE;
+    }
+
+    public synchronized void isMovie() {
+        while (transferMode == IDLE) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        transferMode = IDLE;
     }
 }

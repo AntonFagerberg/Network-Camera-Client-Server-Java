@@ -5,9 +5,10 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 
 public class ServerStateSender extends Thread {
-    private int port;
-    private OutputStream outputStream;
     private ServerMonitor serverMonitor;
+    private int port;
+    private static final int
+        MODE_MOVIE = 1;
 
     public ServerStateSender(int port, ServerMonitor serverMonitor) {
         this.port = port;
@@ -16,8 +17,18 @@ public class ServerStateSender extends Thread {
     }
 
     public void run() {
-        while (true) {
-            serverMonitor.isMovie();
+        try {
+            ServerSocket serverSocket = new ServerSocket(port);
+            OutputStream  outputStream = serverSocket.accept().getOutputStream();
+            System.out.println("ServerStateSender started at port: " + port + ".");
+
+            while (true) {
+                serverMonitor.isMovie();
+                outputStream.write(MODE_MOVIE);
+                System.out.println("Movie sent!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

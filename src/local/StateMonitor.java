@@ -1,27 +1,29 @@
 package local;
 
 public class StateMonitor {
-    private boolean idle = false;
+    public static final boolean
+        MOVIE = true,
+        IDLE = false;
+    private boolean
+        mode = IDLE,
+        forceMode = false;
 
-    public synchronized void setMovie() {
-        idle = false;
-        notifyAll();
+    public synchronized boolean getMode() {
+        return mode;
     }
 
-    public synchronized void setIdle() {
-        idle = false;
-        notifyAll();
-    }
-
-    public synchronized void idle() throws InterruptedException {
-        while (idle) {
-            wait();
+    public synchronized void setMode(boolean mode) {
+        if (!forceMode) {
+            this.mode = mode;
         }
     }
 
-    public synchronized void movie() throws InterruptedException {
-        while (!idle) {
-            wait();
-        }
+    public synchronized void setForcedMode(boolean mode) {
+        forceMode = true;
+        this.mode = mode;
+    }
+
+    public synchronized void unsetForcedMode() {
+        forceMode = false;
     }
 }

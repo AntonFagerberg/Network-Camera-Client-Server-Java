@@ -25,7 +25,7 @@ public class PictureSender extends Thread {
             int length;
 
             while (true) {
-                length = serverMonitor.fillData(JPEGdata);
+                length = serverMonitor.fetchJPEGData(JPEGdata);
                 outputStream.write(JPEGdata, 0, length);
             }
         } catch (IOException e) {

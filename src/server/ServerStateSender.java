@@ -18,9 +18,9 @@ public class ServerStateSender extends Thread {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             outputStream = serverSocket.accept().getOutputStream();
-            while (true) {
+//            while (true) {
 //                outputStream.write(1);
-            }
+//            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,7 +1,6 @@
 package server;
 
 import se.lth.cs.fakecamera.Axis211A;
-import se.lth.cs.fakecamera.MotionDetector;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,7 +15,6 @@ public class PictureSender extends Thread {
     public PictureSender(int port, ServerMonitor monitor) {
         this.port = port;
         this.monitor = monitor;
-        (new MotionDetectorUpdater()).start();
     }
 
     public void run() {
@@ -48,19 +46,4 @@ public class PictureSender extends Thread {
             outputStream.write(jpegData, 0, length);
         }
 	}
-
-    private class MotionDetectorUpdater extends Thread {
-        private MotionDetector motionDetector = new MotionDetector();
-
-        public void run() {
-            while (true) {
-                System.out.println(motionDetector.detect());
-                if (motionDetector.detect()) {
-                    monitor.setMovie();
-                } else {
-                    monitor.setIdle();
-                }
-            }
-        }
-    }
 }

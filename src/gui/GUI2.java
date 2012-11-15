@@ -2,14 +2,18 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Image;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
+import common.JPEG;
+
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
@@ -17,6 +21,10 @@ import java.awt.Color;
 public class GUI2 extends JFrame {
 
 	private JPanel contentPane;
+	private ImageIcon image1;
+	private ImageIcon image2;
+	private JLabel lbImage1;
+	private JLabel lbImage2;
 
 	/**
 	 * Launch the application.
@@ -38,6 +46,8 @@ public class GUI2 extends JFrame {
 	 * Create the frame.
 	 */
 	public GUI2() {
+     
+
 		setTitle("Video Surveillance");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 861, 593);
@@ -46,13 +56,16 @@ public class GUI2 extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		image1 = new ImageIcon("/h/d8/r/ada10lny/Pictures/turtle");
+		image2 = new ImageIcon("/h/d8/r/ada10lny/Pictures/turtle");
+		
 		JPanel panel2 = new JPanel();
 		panel2.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 2", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
 		panel2.setBounds(448, 54, 329, 352);
 		contentPane.add(panel2);
 		panel2.setLayout(null);
 		
-		JLabel lbImage2 = new JLabel("");
+		lbImage2 = new JLabel(image2);
 		lbImage2.setBounds(5, 20, 319, 327);
 		panel2.add(lbImage2);
 		
@@ -62,7 +75,7 @@ public class GUI2 extends JFrame {
 		contentPane.add(panel1);
 		panel1.setLayout(null);
 		
-		JLabel lbImage1 = new JLabel("");
+		lbImage1 = new JLabel(image1);
 		lbImage1.setBounds(5, 20, 319, 327);
 		panel1.add(lbImage1);
 		
@@ -87,6 +100,19 @@ public class GUI2 extends JFrame {
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(rbSync);
 		bg.add(rbAsync);
+		
+		setVisible(true);
+	}
+	
+	public void refreshImage(byte[] jpeg) {
+//		image1 = new ImageIcon(jpeg);
+//		System.out.println("Image recieved");
+//		lbImage1.repaint();
+		   Image image = getToolkit().createImage(jpeg);
+	        getToolkit().prepareImage(image,-1,-1,null);     
+	        image1.setImage(image);
+	        image1.paintIcon(this, lbImage1.getGraphics(), 0, 42);
+	        
 		
 	}
 }

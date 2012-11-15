@@ -15,6 +15,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.JButton;
 
 public class GUI2 extends JFrame {
 
@@ -24,8 +25,11 @@ public class GUI2 extends JFrame {
 	private JLabel lbImage1;
 	private JLabel lbImage2;
 	private JPanel panel1;
-	private TitledBorder borderGray;
-	private TitledBorder borderRed; 
+	private TitledBorder borderGrayCam1;
+	private TitledBorder borderRedCam1; 
+	private TitledBorder borderGrayCam2;
+	private TitledBorder borderRedCam2; 
+	private JPanel panelActive;
 	private boolean isIdle;
 
 	/**
@@ -61,23 +65,28 @@ public class GUI2 extends JFrame {
 		
 		//Initialization
 		isIdle = true;
-		borderGray = new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
-		borderRed = new TitledBorder(new LineBorder(new Color(255, 0, 0)), "Cam 1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		borderGrayCam1 = new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Camera1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		borderRedCam1 = new TitledBorder(new LineBorder(new Color(255, 0, 0)), "Camera1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		borderGrayCam2 = new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Camera2", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		borderRedCam2 = new TitledBorder(new LineBorder(new Color(255, 0, 0)), "Camera2", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		
 		image1 = new ImageIcon();
 		image2 = new ImageIcon();
 		
 		//Creating panels etc
-		JPanel panel2 = new JPanel();
-		panel2.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 2", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		panel2.setBounds(448, 54, 328, 259);
-		contentPane.add(panel2);
-		panel2.setLayout(null);
+		
 		
 		panel1 = new JPanel();
-		panel1.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
+		panel1.setBorder(borderGrayCam1);
 		panel1.setBounds(58, 54, 328, 259);
 		contentPane.add(panel1);
 		panel1.setLayout(null);
+		
+		JPanel panel2 = new JPanel();
+		panel2.setBorder(borderGrayCam2);
+		panel2.setBounds(448, 54, 328, 259);
+		contentPane.add(panel2);
+		panel2.setLayout(null);
 		
 		lbImage1 = new JLabel(image1);
 		lbImage1.setBounds(4, 15, 320, 240);
@@ -88,27 +97,42 @@ public class GUI2 extends JFrame {
 		panel2.add(lbImage2);
 		
 		
-		JLabel lbText1 = new JLabel("Tjohoo");
-		lbText1.setBounds(63, 413, 319, 69);
+		JLabel lbText1 = new JLabel("");
+		lbText1.setBounds(58, 325, 319, 69);
 		contentPane.add(lbText1);
 		
-		JLabel lbText2 = new JLabel("Tjohoo2");
-		lbText2.setBounds(453, 413, 319, 69);
+		JLabel lbText2 = new JLabel("");
+		lbText2.setBounds(448, 325, 319, 69);
 		contentPane.add(lbText2);
 		
 		JRadioButton rbSync = new JRadioButton("Synchron");
 		rbSync.setSelected(true);
-		rbSync.setBounds(233, 490, 149, 23);
+		rbSync.setBounds(58, 490, 149, 23);
 		contentPane.add(rbSync);
 	
 		
 		JRadioButton rbAsync = new JRadioButton("Asynchron");
-		rbAsync.setBounds(453, 490, 149, 23);
+		rbAsync.setBounds(237, 490, 149, 23);
 		contentPane.add(rbAsync);
 		
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(rbSync);
 		bg.add(rbAsync);
+		
+		panelActive = new JPanel();
+		panelActive.setBounds(448, 398, 328, 136);
+		contentPane.add(panelActive);
+		panelActive.setLayout(null);
+		
+		JButton pbDeactivate = new JButton("Deactivate");
+		pbDeactivate.setBounds(199, 99, 117, 25);
+		panelActive.add(pbDeactivate);
+		
+		JLabel lbActive = new JLabel("Movie mode triggered by Camera 0");
+		lbActive.setBounds(12, 12, 304, 53);
+		panelActive.add(lbActive);
+		
+		panelActive.setVisible(false);
 		
 		setVisible(true);
 		setResizable(false);
@@ -125,9 +149,10 @@ public class GUI2 extends JFrame {
 	        
 	        if(isIdle != this.isIdle){
 	        	if(isIdle){
-	        		panel1.setBorder(borderGray);
+	        		panel1.setBorder(borderGrayCam1);
 	        	}else{
-	        		panel1.setBorder(borderRed);
+	        		panel1.setBorder(borderRedCam1);
+	        		panelActive.setVisible(true);
 	        	}
 	        }
 	        this.isIdle = isIdle;

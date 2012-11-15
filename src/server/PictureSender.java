@@ -12,11 +12,11 @@ public class PictureSender extends Thread {
 	private int port;
     private OutputStream outputStream;
     private ServerMonitor monitor;
-    private MotionDetector motionDetector = new MotionDetector();
 
     public PictureSender(int port, ServerMonitor monitor) {
         this.port = port;
         this.monitor = monitor;
+        (new MotionDetectorUpdater()).start();
     }
 
     public void run() {
@@ -42,15 +42,25 @@ public class PictureSender extends Thread {
 		int length;
 		byte[] jpegData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
 
-
         while (true) {
-            if (motionDetector.detect()) {
-                monitor.setMovie();
-            } else {
-                monitor.setIdle();
-            }
+            monitor.delay();
             length = camera.getJPEG(jpegData, 0);
             outputStream.write(jpegData, 0, length);
         }
 	}
+
+    private class MotionDetectorUpdater extends Thread {
+        private MotionDetector motionDetector = new MotionDetector();
+
+        public void run() {
+            while (true) {
+                System.out.println(motionDetector.detect());
+                if (motionDetector.detect()) {
+                    monitor.setMovie();
+                } else {
+                    monitor.setIdle();
+                }
+            }
+        }
+    }
 }

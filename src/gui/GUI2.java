@@ -11,8 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import common.JPEG;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;

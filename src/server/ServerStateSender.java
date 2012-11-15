@@ -19,8 +19,7 @@ public class ServerStateSender extends Thread {
             ServerSocket serverSocket = new ServerSocket(port);
             outputStream = serverSocket.accept().getOutputStream();
             while (true) {
-                monitor.motionDetect();
-                outputStream.write(1);
+//                outputStream.write(1);
             }
         } catch (IOException e) {
             e.printStackTrace();

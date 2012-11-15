@@ -1,39 +1,32 @@
 package server;
 
 public class ServerMonitor {
+    private static final int IDLE_WAIT = 5000;
     private boolean
             idle = false,
-            hasChanged = false;
+            wasIdle = false;
 
     public synchronized void setMovie() {
         if (idle) {
-            System.out.println("Detected motion bieacch!");
-            hasChanged = true;
+            idle = false;
             notifyAll();
         }
-
-        idle = false;
-    }
-
-    public synchronized void motionDetect() {
-        while (!hasChanged) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        hasChanged = false;
     }
 
     public synchronized void setIdle() {
-        idle = true;
+        if (!idle) {
+            idle = true;
+            notifyAll();
+        }
+    }
 
-        try {
-            wait(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public synchronized void delay() {
+        if (idle) {
+            try {
+                wait(IDLE_WAIT);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

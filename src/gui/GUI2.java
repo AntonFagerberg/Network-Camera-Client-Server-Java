@@ -23,6 +23,10 @@ public class GUI2 extends JFrame {
 	private ImageIcon image2;
 	private JLabel lbImage1;
 	private JLabel lbImage2;
+	private JPanel panel1;
+	private TitledBorder borderGray;
+	private TitledBorder borderRed; 
+	private boolean isIdle;
 
 	/**
 	 * Launch the application.
@@ -54,28 +58,35 @@ public class GUI2 extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		image1 = new ImageIcon("/h/d8/r/ada10lny/Pictures/turtle");
-		image2 = new ImageIcon("/h/d8/r/ada10lny/Pictures/turtle");
 		
+		//Initialization
+		isIdle = true;
+		borderGray = new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		borderRed = new TitledBorder(new LineBorder(new Color(255, 0, 0)), "Cam 1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51));
+		image1 = new ImageIcon();
+		image2 = new ImageIcon();
+		
+		//Creating panels etc
 		JPanel panel2 = new JPanel();
 		panel2.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 2", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		panel2.setBounds(448, 54, 329, 352);
+		panel2.setBounds(448, 54, 328, 259);
 		contentPane.add(panel2);
 		panel2.setLayout(null);
 		
-		lbImage2 = new JLabel(image2);
-		lbImage2.setBounds(5, 20, 319, 327);
-		panel2.add(lbImage2);
-		
-		JPanel panel1 = new JPanel();
+		panel1 = new JPanel();
 		panel1.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Cam 1", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(51, 51, 51)));
-		panel1.setBounds(58, 54, 329, 352);
+		panel1.setBounds(58, 54, 328, 259);
 		contentPane.add(panel1);
 		panel1.setLayout(null);
 		
 		lbImage1 = new JLabel(image1);
-		lbImage1.setBounds(5, 20, 319, 327);
+		lbImage1.setBounds(4, 15, 320, 240);
 		panel1.add(lbImage1);
+		
+		lbImage2 = new JLabel(image2);
+		lbImage2.setBounds(4, 5, 320, 240);
+		panel2.add(lbImage2);
+		
 		
 		JLabel lbText1 = new JLabel("Tjohoo");
 		lbText1.setBounds(63, 413, 319, 69);
@@ -100,16 +111,26 @@ public class GUI2 extends JFrame {
 		bg.add(rbAsync);
 		
 		setVisible(true);
+		setResizable(false);
 	}
 	
-	public void refreshImage(byte[] jpeg) {
+	public void refreshImage(byte[] jpeg, boolean isIdle) {
 //		image1 = new ImageIcon(jpeg);
 //		System.out.println("Image recieved");
 //		lbImage1.repaint();
 		   Image image = getToolkit().createImage(jpeg);
-	        getToolkit().prepareImage(image,-1,-1,null);     
+	        getToolkit().prepareImage(image,-1,-1,null);
 	        image1.setImage(image);
-	        image1.paintIcon(this, lbImage1.getGraphics(), 0, 42);
+	        image1.paintIcon(this, lbImage1.getGraphics(), 0, 0);
+	        
+	        if(isIdle != this.isIdle){
+	        	if(isIdle){
+	        		panel1.setBorder(borderGray);
+	        	}else{
+	        		panel1.setBorder(borderRed);
+	        	}
+	        }
+	        this.isIdle = isIdle;
 	        
 		
 	}

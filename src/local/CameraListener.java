@@ -2,6 +2,7 @@ package local;
 
 import common.JPEG;
 import se.lth.cs.cameraproxy.Axis211A;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;

@@ -7,9 +7,13 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 
 public class PictureSender extends Thread {
-	private final static int port = 6077;
 	private final Axis211A camera = new Axis211A();
+	private int port;
     private OutputStream outputStream;
+
+    public PictureSender(int port) {
+        this.port = port;
+    }
 
     public void run() {
         try {

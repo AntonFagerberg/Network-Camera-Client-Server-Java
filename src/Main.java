@@ -1,6 +1,6 @@
-import local.CameraListener;
+import local.CameraReceiver;
 import local.ClientMonitor;
-import local.ClientStateListener;
+import local.ClientStateReceiver;
 import local.StateMonitor;
 import server.PictureSender;
 import server.ServerMonitor;
@@ -12,10 +12,10 @@ public class Main {
         ServerMonitor serverMonitor = new ServerMonitor();
         StateMonitor stateMonitor = new StateMonitor();
         (new PictureSender(6077, serverMonitor)).start();
-        (new CameraListener("localhost", 6077, 0, clientMonitor)).start();
+        (new CameraReceiver("localhost", 6077, 0, clientMonitor)).start();
         (new ServerStateSender(6078, serverMonitor)).start();
-        (new ClientStateListener("localhost", 6078, clientMonitor)).start();
+        (new ClientStateReceiver("localhost", 6078, clientMonitor)).start();
 //        (new PictureSender(6078)).start();
-//        (new CameraListener("localhost", 6078, 1, monitor)).start();
+//        (new CameraReceiver("localhost", 6078, 1, monitor)).start();
     }
 }

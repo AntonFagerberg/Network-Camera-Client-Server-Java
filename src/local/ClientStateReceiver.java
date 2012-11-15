@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-public class ClientStateListener extends Thread {
+public class ClientStateReceiver extends Thread {
     private InputStream inputStream;
     private String url;
     private int port;
     private StateMonitor stateMonitor;
 
-    public ClientStateListener(String url, int port, StateMonitor stateMonitor) {
+    public ClientStateReceiver(String url, int port, StateMonitor stateMonitor) {
         this.url = url;
         this.port = port;
         this.stateMonitor = stateMonitor;

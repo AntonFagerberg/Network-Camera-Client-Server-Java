@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-public class CameraListener extends Thread {
+public class CameraReceiver extends Thread {
 	private InputStream inputStream;
     private String url;
     private int port, id;
     private ClientMonitor clientMonitor;
 
-	public CameraListener(String url, int port, int id, ClientMonitor clientMonitor) {
+	public CameraReceiver(String url, int port, int id, ClientMonitor clientMonitor) {
 		this.url = url;
         this.port = port;
         this.clientMonitor = clientMonitor;

@@ -49,7 +49,7 @@ public class JPEGHTTPServer {
      * <UL>
      * <LI>Waits for a client to connect
      * <LI>Reads a request from that client
-     * <LI>Sends a JPEG image from the camera (if it's a GET request)
+     * <LI>Sends a common.JPEG image from the camera (if it's a GET request)
      * <LI>Closes the socket, i.e. disconnects from the client.
      * </UL>
      *
@@ -93,7 +93,7 @@ public class JPEGHTTPServer {
                 // Interpret the request. Complain about everything but GET.
                 // Ignore the file name.
                 if (request.substring(0,4).equals("GET ")) {
-                    // Got a GET request. Respond with a JPEG image from the
+                    // Got a GET request. Respond with a common.JPEG image from the
                     // camera. Tell the client not to cache the image
                     putLine(os, "HTTP/1.0 200 OK");
                     putLine(os, "Content-Type: image/jpeg");
@@ -168,7 +168,7 @@ public class JPEGHTTPServer {
     // ----------------------------------------------------- PRIVATE ATTRIBUTES
 
     private int myPort;                             // TCP port for HTTP server
-    private Axis211A myCamera;                      // Makes up the JPEG images
+    private Axis211A myCamera;                      // Makes up the common.JPEG images
 
     // By convention, these bytes are always sent between lines
     // (CR = 13 = carriage return, LF = 10 = line feed)

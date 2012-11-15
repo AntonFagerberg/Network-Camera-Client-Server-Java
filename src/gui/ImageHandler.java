@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.Random;
+
 import common.JPEG;
 
 import local.ClientMonitor;
@@ -8,6 +10,7 @@ public class ImageHandler extends Thread {
 	private ClientMonitor monitor;
 	private GUI2 gui;
 	private JPEG jpeg;
+
 
 	public ImageHandler(ClientMonitor monitor, GUI2 gui) {
 		this.monitor = monitor;
@@ -29,6 +32,7 @@ public class ImageHandler extends Thread {
 	}
 
 	private void refreshGUI() {
-		gui.refreshImage(jpeg.getData());
+		
+		gui.refreshImage(jpeg.getData(), false);
 	}
 }

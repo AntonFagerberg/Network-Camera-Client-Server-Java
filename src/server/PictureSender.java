@@ -7,43 +7,29 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 
 public class PictureSender extends Thread {
-	private final Axis211A camera = new Axis211A();
 	private int port;
-    private OutputStream outputStream;
-    private ServerMonitor monitor;
+    private ServerMonitor serverMonitor;
 
-    public PictureSender(int port, ServerMonitor monitor) {
+    public PictureSender(int port, ServerMonitor serverMonitor) {
         this.port = port;
-        this.monitor = monitor;
+        this.serverMonitor = serverMonitor;
     }
 
     public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            outputStream = serverSocket.accept().getOutputStream();
-            System.out.println("Started server at port: " + port + ".");
+            OutputStream  outputStream = serverSocket.accept().getOutputStream();
+            System.out.println("PictureSender started at port: " + port + ".");
 
-            if (camera.connect()){
-                System.out.println("Connected to camera.");
-                transferJPEG();
-            } else {
-                System.out.println("Could not connect to camera.");
-                System.exit(1);
+            byte[] JPEGdata = new byte[Axis211A.IMAGE_BUFFER_SIZE];
+            int length;
+
+            while (true) {
+                length = serverMonitor.fillData(JPEGdata);
+                outputStream.write(JPEGdata, 0, length);
             }
         } catch (IOException e) {
-            camera.close();
             e.printStackTrace();
         }
     }
-	
-	private void transferJPEG() throws IOException {
-		int length;
-		byte[] jpegData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
-
-        while (true) {
-            monitor.delay();
-            length = camera.getJPEG(jpegData, 0);
-            outputStream.write(jpegData, 0, length);
-        }
-	}
 }

@@ -12,19 +12,14 @@ public class MotionDetectorUpdater extends Thread {
     }
 
     public void run() {
-        boolean motionDetect,
-                wasIdle = true;
         while (true) {
-            motionDetect = motionDetector.detect();
-
-            if (motionDetect && wasIdle) {
-//                System.out.println(motionDetect + " -> " + wasIdle);
+            System.out.println(motionDetector.detect() + " " + System.currentTimeMillis());
+            if (motionDetector.detect()) {
+                System.out.println("Calling setMovie");
                 serverMonitor.setMovie();
-                wasIdle = false;
-            } else if (!motionDetect && !wasIdle) {
-//                System.out.println(motionDetect + " -> " + wasIdle);
-                serverMonitor.setIdle();
-                wasIdle = true;
+                System.out.println("Call ended");
+            } else  {
+//                serverMonitor.setIdle2();
             }
         }
     }

@@ -7,22 +7,17 @@ import java.net.ServerSocket;
 public class ServerStateSender extends Thread {
     private int port;
     private OutputStream outputStream;
-    private ServerMonitor monitor;
+    private ServerMonitor serverMonitor;
 
-    public ServerStateSender(int port, ServerMonitor monitor) {
+    public ServerStateSender(int port, ServerMonitor serverMonitor) {
         this.port = port;
-        this.monitor = monitor;
+        this.serverMonitor = serverMonitor;
+        System.out.println("ServerStateSender started on port: " + port + ".");
     }
 
     public void run() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            outputStream = serverSocket.accept().getOutputStream();
-//            while (true) {
-//                outputStream.write(1);
-//            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        while (true) {
+            serverMonitor.isMovie();
         }
     }
 }

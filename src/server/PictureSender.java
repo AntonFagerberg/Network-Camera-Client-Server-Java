@@ -1,6 +1,7 @@
 package server;
 
 import se.lth.cs.fakecamera.Axis211A;
+import se.lth.cs.fakecamera.MotionDetector;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,9 +11,12 @@ public class PictureSender extends Thread {
 	private final Axis211A camera = new Axis211A();
 	private int port;
     private OutputStream outputStream;
+    private ServerMonitor monitor;
+    private MotionDetector motionDetector = new MotionDetector();
 
-    public PictureSender(int port) {
+    public PictureSender(int port, ServerMonitor monitor) {
         this.port = port;
+        this.monitor = monitor;
     }
 
     public void run() {
@@ -32,7 +36,6 @@ public class PictureSender extends Thread {
             camera.close();
             e.printStackTrace();
         }
-
     }
 	
 	private void transferJPEG() throws IOException {
@@ -40,6 +43,11 @@ public class PictureSender extends Thread {
 		byte[] jpegData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
 
         while (true) {
+            if (motionDetector.detect()) {
+                monitor.setMovie();
+            } else {
+                monitor.setIdle();
+            }
             length = camera.getJPEG(jpegData, 0);
             outputStream.write(jpegData, 0, length);
         }

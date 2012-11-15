@@ -11,9 +11,9 @@ public class CameraListener extends Thread {
 	private InputStream inputStream;
     private String url;
     private int port, id;
-    private Monitor monitor;
+    private ClientMonitor monitor;
 
-	public CameraListener(String url, int port, int id, Monitor monitor) {
+	public CameraListener(String url, int port, int id, ClientMonitor monitor) {
 		this.url = url;
         this.port = port;
         this.monitor = monitor;

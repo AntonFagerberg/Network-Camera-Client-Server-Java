@@ -4,7 +4,7 @@ import common.JPEG;
 
 import java.util.LinkedList;
 
-public class Monitor {
+public class ClientMonitor {
     private LinkedList[] queues = {
         new LinkedList<JPEG>(),
         new LinkedList<JPEG>()

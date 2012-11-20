@@ -16,6 +16,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JButton;
+import java.awt.FlowLayout;
 
 public class GUI2 extends JFrame {
 
@@ -32,6 +33,10 @@ public class GUI2 extends JFrame {
 	private TitledBorder borderRedCam2; 
 	private JPanel panelActive;
 	private boolean isIdle;
+	private JLabel lbActive;
+	private JLabel delayCamera1;
+	private JLabel delayCamera2;
+	private JRadioButton rbIdle,rbAuto,rbMovie,rbMovieAuto,rbSync,rbAsync;
 
 	/**
 	 * Launch the application.
@@ -94,44 +99,89 @@ public class GUI2 extends JFrame {
 		panel1.add(lbImage1);
 		
 		lbImage2 = new JLabel(image2);
-		lbImage2.setBounds(4, 5, 320, 240);
+		lbImage2.setBounds(4, 15, 320, 240);
 		panel2.add(lbImage2);
 		
 		
-		JLabel lbText1 = new JLabel("");
-		lbText1.setBounds(58, 325, 319, 69);
-		contentPane.add(lbText1);
+		delayCamera1 = new JLabel("");
+		delayCamera1.setBounds(58, 325, 319, 69);
+		contentPane.add(delayCamera1);
 		
-		JLabel lbText2 = new JLabel("");
-		lbText2.setBounds(448, 325, 319, 69);
-		contentPane.add(lbText2);
+		delayCamera2 = new JLabel("");
+		delayCamera2.setBounds(448, 325, 319, 69);
+		contentPane.add(delayCamera2);
 		
-		JRadioButton rbSync = new JRadioButton("Synchron");
-		rbSync.setSelected(true);
-		rbSync.setBounds(58, 490, 149, 23);
-		contentPane.add(rbSync);
-	
-		
-		JRadioButton rbAsync = new JRadioButton("Asynchron");
-		rbAsync.setBounds(237, 490, 149, 23);
-		contentPane.add(rbAsync);
-		
-		ButtonGroup bg = new ButtonGroup();
-		bg.add(rbSync);
-		bg.add(rbAsync);
+		ButtonGroup bgSync = new ButtonGroup();
+		ButtonGroup bgMode = new ButtonGroup();
 		
 		panelActive = new JPanel();
 		panelActive.setBounds(448, 398, 328, 136);
 		contentPane.add(panelActive);
 		panelActive.setLayout(null);
 		
-		JButton pbDeactivate = new JButton("Deactivate");
-		pbDeactivate.setBounds(199, 99, 117, 25);
-		panelActive.add(pbDeactivate);
-		
-		JLabel lbActive = new JLabel("Movie mode triggered by Camera 0");
-		lbActive.setBounds(12, 12, 304, 53);
+		lbActive = new JLabel("Movie mode triggered by Camera X");
+		lbActive.setBounds(0, 0, 304, 21);
 		panelActive.add(lbActive);
+		
+		JPanel settingsContainer = new JPanel();
+		settingsContainer.setBorder(new LineBorder(new Color(184, 207, 229), 1, true));
+		settingsContainer.setBounds(58, 398, 328, 145);
+		contentPane.add(settingsContainer);
+		settingsContainer.setLayout(null);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(4, 32, 318, 33);
+		settingsContainer.add(panel);
+		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
+		rbSync = new JRadioButton("Synchronous");
+		panel.add(rbSync);
+		
+		bgSync.add(rbSync);
+		
+		rbAuto = new JRadioButton("Auto");
+		panel.add(rbAuto);
+		rbAuto.setSelected(true);
+		bgSync.add(rbAuto);
+		
+		rbAsync = new JRadioButton("Asynchronous");
+		panel.add(rbAsync);
+		bgSync.add(rbAsync);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBounds(4, 80, 107, 25);
+		settingsContainer.add(panel_2);
+		panel_2.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
+		JLabel lblCameraMode = new JLabel("Camera mode");
+		panel_2.add(lblCameraMode);
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBounds(4, 100, 195, 33);
+		settingsContainer.add(panel_3);
+		panel_3.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
+		rbMovie = new JRadioButton("Movie");
+		panel_3.add(rbMovie);
+		
+		rbMovieAuto = new JRadioButton("Auto");
+		rbMovieAuto.setSelected(true);
+		panel_3.add(rbMovieAuto);
+		
+		rbIdle = new JRadioButton("Idle");
+		panel_3.add(rbIdle);
+		
+		bgMode.add(rbMovie);
+		bgMode.add(rbMovieAuto);
+		bgMode.add(rbIdle);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(4, 12, 106, 25);
+		settingsContainer.add(panel_1);
+		panel_1.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		
+		JLabel lblSyncSettings = new JLabel("Sync settings");
+		panel_1.add(lblSyncSettings);
 		
 		panelActive.setVisible(false);
 		
@@ -139,7 +189,7 @@ public class GUI2 extends JFrame {
 		setResizable(false);
 	}
 	
-	public void refreshImageCamera1(byte[] jpeg, boolean isIdle) {
+	public void refreshImageCamera1(byte[] jpeg) {
 //		image1 = new ImageIcon(jpeg);
 //		System.out.println("Image recieved");
 //		lbImage1.repaint();
@@ -153,6 +203,7 @@ public class GUI2 extends JFrame {
 	        		panel1.setBorder(borderGrayCam1);
 	        	}else{
 	        		panel1.setBorder(borderRedCam1);
+	        		lbActive.setText("Movie mode triggered by Camera 1");
 	        		panelActive.setVisible(true);
 	        	}
 	        }
@@ -160,7 +211,7 @@ public class GUI2 extends JFrame {
 		
 	}
 	
-	public void refreshImageCamera2(byte[] jpeg, boolean isIdle) {
+	public void refreshImageCamera2(byte[] jpeg) {
 //		image1 = new ImageIcon(jpeg);
 //		System.out.println("Image recieved");
 //		lbImage1.repaint();
@@ -174,10 +225,42 @@ public class GUI2 extends JFrame {
 	        		panel2.setBorder(borderGrayCam2);
 	        	}else{
 	        		panel2.setBorder(borderRedCam2);
+	        		lbActive.setText("Movie mode triggered by Camera 2");
 	        		panelActive.setVisible(true);
 	        	}
 	        }
 	        this.isIdle = isIdle;
 		
 	}
+	
+	public int getModeFromGui(){
+		if(rbMovie.isSelected()){
+			return 1;
+		} else if (rbIdle.isSelected()){
+			return 0;
+		} else if(rbMovieAuto.isSelected()){
+			return -1;
+		}
+		return 1337;
+	}
+	
+	public int getSyncFromGui(){
+		if(rbSync.isSelected()){
+			return 1;
+		} else if (rbAsync.isSelected()){
+			return 0;
+		} else if(rbAuto.isSelected()){
+			return -1;
+		}
+		return 1338;
+	}
+	
+	public void printDelayCamera1(long delay) {
+		delayCamera1.setText("Delay: " + delay);
+	}
+	
+	public void printDelayCamera2(long delay) {
+		delayCamera2.setText("Delay: " + delay);
+	}
+	
 }

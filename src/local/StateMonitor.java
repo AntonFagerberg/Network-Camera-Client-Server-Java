@@ -7,6 +7,7 @@ public class StateMonitor {
     private boolean
         mode = IDLE,
         forceMode = false;
+    private long lastTimeStamp;
 
     public synchronized boolean getMode() {
         return mode;
@@ -25,5 +26,28 @@ public class StateMonitor {
 
     public synchronized void unsetForcedMode() {
         forceMode = false;
+    }
+
+    public synchronized void synchronizeTimeStamps(int cameraIndex, long imageTimeStamp) {
+        if (lastTimeStamp < 0) {
+            lastTimeStamp = imageTimeStamp;
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (lastTimeStamp - imageTimeStamp > 0) {
+                System.out.println("Waiting: " + (lastTimeStamp - imageTimeStamp) + " for thread: " + Thread.currentThread().getId());
+                try {
+                    wait(lastTimeStamp - imageTimeStamp);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            lastTimeStamp = -1;
+            notify();
+        }
     }
 }

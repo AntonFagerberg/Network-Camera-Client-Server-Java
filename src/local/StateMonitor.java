@@ -7,7 +7,7 @@ public class StateMonitor {
     private boolean
         mode = IDLE,
         forceMode = false;
-    private long lastTimeStamp;
+    private long lastTimeStamp = System.currentTimeMillis();
 
     public synchronized boolean getMode() {
         return mode;
@@ -29,7 +29,19 @@ public class StateMonitor {
     }
 
     public synchronized void synchronizeTimeStamps(int cameraIndex, long imageTimeStamp) {
-        if (lastTimeStamp < 0) {
+        if (lastTimeStamp < imageTimeStamp) {
+//            try {
+                System.out.println("Waiting: " + (imageTimeStamp - lastTimeStamp));
+//                wait(imageTimeStamp - lastTimeStamp);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+        }
+
+        if (lastTimeStamp < imageTimeStamp)
+            lastTimeStamp = imageTimeStamp;
+
+        /*if (lastTimeStamp < 0) {
             lastTimeStamp = imageTimeStamp;
             try {
                 wait();
@@ -38,8 +50,9 @@ public class StateMonitor {
             }
         } else {
             if (lastTimeStamp - imageTimeStamp > 0) {
-                System.out.println("Waiting: " + (lastTimeStamp - imageTimeStamp) + " for thread: " + Thread.currentThread().getId());
+//                System.out.println("Waiting: " + (lastTimeStamp - imageTimeStamp) + " for thread: " + Thread.currentThread().getId());
                 try {
+                    notify();
                     wait(lastTimeStamp - imageTimeStamp);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -47,7 +60,6 @@ public class StateMonitor {
             }
 
             lastTimeStamp = -1;
-            notify();
-        }
+        }   */
     }
 }

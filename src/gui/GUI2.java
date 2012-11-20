@@ -25,6 +25,7 @@ public class GUI2 extends JFrame {
 	private JLabel lbImage1;
 	private JLabel lbImage2;
 	private JPanel panel1;
+	private JPanel panel2;
 	private TitledBorder borderGrayCam1;
 	private TitledBorder borderRedCam1; 
 	private TitledBorder borderGrayCam2;
@@ -82,7 +83,7 @@ public class GUI2 extends JFrame {
 		contentPane.add(panel1);
 		panel1.setLayout(null);
 		
-		JPanel panel2 = new JPanel();
+		panel2 = new JPanel();
 		panel2.setBorder(borderGrayCam2);
 		panel2.setBounds(448, 54, 328, 259);
 		contentPane.add(panel2);
@@ -138,7 +139,7 @@ public class GUI2 extends JFrame {
 		setResizable(false);
 	}
 	
-	public void refreshImage(byte[] jpeg, boolean isIdle) {
+	public void refreshImageCamera1(byte[] jpeg, boolean isIdle) {
 //		image1 = new ImageIcon(jpeg);
 //		System.out.println("Image recieved");
 //		lbImage1.repaint();
@@ -156,7 +157,27 @@ public class GUI2 extends JFrame {
 	        	}
 	        }
 	        this.isIdle = isIdle;
+		
+	}
+	
+	public void refreshImageCamera2(byte[] jpeg, boolean isIdle) {
+//		image1 = new ImageIcon(jpeg);
+//		System.out.println("Image recieved");
+//		lbImage1.repaint();
+		   Image image = getToolkit().createImage(jpeg);
+	        getToolkit().prepareImage(image,-1,-1,null);
+	        image2.setImage(image);
+	        image2.paintIcon(this, lbImage2.getGraphics(), 0, 0);
 	        
+	        if(isIdle != this.isIdle){
+	        	if(isIdle){
+	        		panel2.setBorder(borderGrayCam2);
+	        	}else{
+	        		panel2.setBorder(borderRedCam2);
+	        		panelActive.setVisible(true);
+	        	}
+	        }
+	        this.isIdle = isIdle;
 		
 	}
 }

@@ -43,7 +43,7 @@ public class CameraReceiver extends Thread {
             if (bytesReceived > 0) {
                 JPEGData = new byte[bytesReceived];
                 System.arraycopy(receivedJPEGData, 0, JPEGData, 0, bytesReceived);
-                gui.refreshImage(receivedJPEGData, false);
+                gui.refreshImageCamera1(receivedJPEGData, false);
             }
         }
     }

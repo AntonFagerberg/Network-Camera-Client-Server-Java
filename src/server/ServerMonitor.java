@@ -13,6 +13,11 @@ public class ServerMonitor {
         mode = false,
         transferMode = IDLE;
     private boolean forced;
+    public int
+		INT_MOVIE_FORCED = 4,
+		INT_IDLE_FORCED = 3,
+		INT_MOVIE = 2,
+		INT_IDLE = 1;
 
     public synchronized void storeJPEGData(byte[] JPEGData, int length) {
         this.length = length;
@@ -33,6 +38,22 @@ public class ServerMonitor {
         return length;
     }
 
+    public synchronized void setMode(int newMode) {
+    	if(newMode == INT_MOVIE_FORCED){
+    		mode = true;
+    		forced = true;
+    	} else if(newMode == INT_IDLE_FORCED){
+    		mode = false;
+    		forced = true;
+    	} else if(newMode == INT_MOVIE){
+    		mode = true;
+    		forced = false;
+    	} else if(newMode == INT_IDLE){
+    		mode = false;
+    		forced = false;
+    	}
+    }
+    
     public synchronized void setMovie() {
     	if(!forced) {
         mode = MOVIE;
@@ -57,9 +78,5 @@ public class ServerMonitor {
         }
 
         transferMode = IDLE;
-    }
-    
-    public synchronized void setForced(boolean forced) {
-    	this.forced = forced;
     }
 }

@@ -8,13 +8,36 @@ public class StateMonitor {
         mode = IDLE,
         forceMode = false;
     private long lastTimeStamp;
-
-    public synchronized boolean getMode() {
-        return mode;
-    }
-    
-    public synchronized boolean isForced() {
-    	return forceMode;
+    public int
+    	INT_MOVIE_FORCED = 4,
+    	INT_IDLE_FORCED = 3,
+    	INT_MOVIE = 2,
+    	INT_IDLE = 1;
+    private int INT_MODE = 1;
+    	
+    public synchronized int getMode(int previousMode) {
+    	while(previousMode == INT_MODE){
+    		try{
+    			wait();
+    		} catch (InterruptedException e){
+    			e.printStackTrace();
+    		}
+    	}
+    	if(forceMode && mode){
+    		INT_MODE = INT_MOVIE_FORCED;
+    		
+    	} else if(forceMode && !mode){
+    		INT_MODE = INT_IDLE_FORCED;
+    		
+    	} else if(!forceMode && mode){
+    		INT_MODE = INT_MOVIE;
+    		
+    	} else if(!forceMode && !mode){
+    		INT_MODE = INT_IDLE;
+    	}
+    	
+    	return INT_MODE;
+    	
     }
 
     public synchronized void setMode(boolean mode) {

@@ -12,7 +12,7 @@ public class Main {
         final ServerMonitor serverMonitor1 = new ServerMonitor();
         final ServerMonitor serverMonitor2 = new ServerMonitor();
         final StateMonitor stateMonitor = new StateMonitor();
-        final GUI2 gui = new GUI2();
+        final GUI2 gui = new GUI2(stateMonitor);
 
         Axis211A camera = new Axis211A();
 

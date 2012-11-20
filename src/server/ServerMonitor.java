@@ -12,10 +12,12 @@ public class ServerMonitor {
     private boolean
         mode = false,
         transferMode = IDLE;
+    private boolean forced;
 
     public synchronized void storeJPEGData(byte[] JPEGData, int length) {
         this.length = length;
         this.JPEGData = JPEGData;
+        forced = false;
     }
 
     public synchronized int fetchJPEGData(byte[] JPEGData) {
@@ -32,13 +34,17 @@ public class ServerMonitor {
     }
 
     public synchronized void setMovie() {
+    	if(!forced) {
         mode = MOVIE;
         transferMode = MOVIE;
         notify();
+    	}
     }
 
     public synchronized void unsetMovie() {
-        mode = IDLE;
+        if (!forced) {
+        	mode = IDLE;
+        }
     }
 
     public synchronized void isMovie() {
@@ -51,5 +57,9 @@ public class ServerMonitor {
         }
 
         transferMode = IDLE;
+    }
+    
+    public synchronized void setForced(boolean forced) {
+    	this.forced = forced;
     }
 }

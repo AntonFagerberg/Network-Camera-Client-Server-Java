@@ -12,20 +12,27 @@ public class StateMonitor {
     public synchronized boolean getMode() {
         return mode;
     }
+    
+    public synchronized boolean isForced() {
+    	return forceMode;
+    }
 
     public synchronized void setMode(boolean mode) {
         if (!forceMode) {
             this.mode = mode;
+            notifyAll();
         }
     }
 
     public synchronized void setForcedMode(boolean mode) {
         forceMode = true;
         this.mode = mode;
+        notifyAll();
     }
 
     public synchronized void unsetForcedMode() {
         forceMode = false;
+        notifyAll();
     }
 
     public synchronized void synchronizeTimeStamps(int cameraIndex, long imageTimeStamp) {

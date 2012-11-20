@@ -59,7 +59,7 @@ public class CameraReceiver extends Thread {
                         10L*(JPEGData[29]<0?256+JPEGData[29]:JPEGData[29]);
 
             stateMonitor.synchronizeTimeStamps(cameraIndex, timeStamp);
-            //                gui.refreshImage(JPEGData.clone(), false);
+            gui.refreshCameraImage(JPEGData.clone(),  cameraIndex);
         }
     }
 }

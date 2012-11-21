@@ -13,7 +13,6 @@ public class ServerStateSender extends Thread {
     public ServerStateSender(int port, ServerMonitor serverMonitor) {
         this.port = port;
         this.serverMonitor = serverMonitor;
-        System.out.println("ServerStateSender started on port: " + port + ".");
     }
 
     public void run() {

@@ -18,9 +18,10 @@ public class ClientStateReceiver extends Thread {
     public void run() {
         try {
             InputStream inputStream = (new Socket(url, port)).getInputStream();
-
+            System.out.println("ClientStateReceiver started at port: " + port + ".");
             while (true) {
                 inputStream.read();
+                System.out.println("ClientStateReceiver - received");
                 stateMonitor.setMode(StateMonitor.MOVIE);
             }
         } catch (IOException e) {

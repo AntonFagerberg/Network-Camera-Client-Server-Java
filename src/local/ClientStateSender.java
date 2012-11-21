@@ -11,7 +11,6 @@ public class ClientStateSender extends Thread {
 	public ClientStateSender(StateMonitor stateMonitor, int port) {
 		this.port = port;
 		this.stateMonitor = stateMonitor;
-		System.out.println("ClientStateSender started on port: " + port + ".");
 	}
 
 	public void run() {
@@ -22,8 +21,11 @@ public class ClientStateSender extends Thread {
 					+ ".");
 			int mode = -1;
 			while(true){
+				System.out.println("ClientStateSender Preparing to send data");
 				mode = stateMonitor.getMode(mode);
+				System.out.println("ClientStateSender Waiting to send data" + mode);
 				outputStream.write(mode);
+				System.out.println("outPutStream data sent: " + mode);
 			}
 
 		} catch (IOException e) {

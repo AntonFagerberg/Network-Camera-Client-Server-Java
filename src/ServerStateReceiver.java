@@ -19,10 +19,12 @@ public class ServerStateReceiver extends Thread {
 	public void run() {
 		try {
 			InputStream inputStream = (new Socket(url, port)).getInputStream();
-
+			System.out.println("ServerStateReceiver started at port: " + port + ".");
 			while (true) {
+				System.out.println("ServerStateReceiver waiting for msg");
 				int msg = inputStream.read();
 				serverMonitor.setMode(msg);
+				System.out.println("Received inputStream message: " + msg);
 			}
 		} catch (IOException e) {
 			System.out.println("Communication error with server: " + url + ":"

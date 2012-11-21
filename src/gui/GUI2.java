@@ -1,26 +1,14 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.Image;
+import local.StateMonitor;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-
-import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.JButton;
-import java.awt.FlowLayout;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import local.StateMonitor;
 
 public class GUI2 extends JFrame implements ActionListener {
 
@@ -155,7 +143,7 @@ public class GUI2 extends JFrame implements ActionListener {
 		panel_2.add(lblCameraMode);
 
 		JPanel panel_3 = new JPanel();
-		panel_3.setBounds(4, 100, 195, 33);
+		panel_3.setBounds(4, 100, 220, 33);
 		settingsContainer.add(panel_3);
 		panel_3.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
@@ -195,31 +183,13 @@ public class GUI2 extends JFrame implements ActionListener {
 	}
 
 	public void refreshCameraImage(byte[] jpeg, int cameraIndex) {
-		// image1 = new ImageIcon(jpeg);
-		// System.out.println("Image received");
-		// lbImage1.repaint();
-		Image image = getToolkit().createImage(jpeg);
-		getToolkit().prepareImage(image, -1, -1, null);
-
 		if (cameraIndex == 1) {
-			image1.setImage(image);
+			image1.setImage(getToolkit().createImage(jpeg));
 			image1.paintIcon(this, lbImage1.getGraphics(), 0, 0);
 		} else if (cameraIndex == 2) {
-			image2.setImage(image);
+			image2.setImage(getToolkit().createImage(jpeg));
 			image2.paintIcon(this, lbImage2.getGraphics(), 0, 0);
 		}
-
-		// if(isIdle != this.isIdle){
-		// if(isIdle){
-		// panel1.setBorder(borderGrayCam1);
-		// }else{
-		// panel1.setBorder(borderRedCam1);
-		// lbActive.setText("Movie mode triggered by Camera 1");
-		// panelActive.setVisible(true);
-		// }
-		// }
-		// this.isIdle = isIdle;
-
 	}
 
 

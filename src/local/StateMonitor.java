@@ -7,8 +7,7 @@ public class StateMonitor {
     private boolean
         mode = IDLE,
         forceMode = false;
-    private long lastTimeStamp;
-    public int
+    public static int
     	INT_MOVIE_FORCED = 4,
     	INT_IDLE_FORCED = 3,
     	INT_MOVIE = 2,
@@ -16,28 +15,25 @@ public class StateMonitor {
     private int INT_MODE = 1;
     	
     public synchronized int getMode(int previousMode) {
-    	while(previousMode == INT_MODE){
+    	while (previousMode == INT_MODE) {
     		try{
     			wait();
     		} catch (InterruptedException e){
     			e.printStackTrace();
     		}
     	}
-    	if(forceMode && mode){
+
+        if (forceMode && mode){
     		INT_MODE = INT_MOVIE_FORCED;
-    		
-    	} else if(forceMode && !mode){
+    	} else if (forceMode){
     		INT_MODE = INT_IDLE_FORCED;
-    		
-    	} else if(!forceMode && mode){
+    	} else if (mode){
     		INT_MODE = INT_MOVIE;
-    		
-    	} else if(!forceMode && !mode){
+    	} else {
     		INT_MODE = INT_IDLE;
     	}
     	
     	return INT_MODE;
-    	
     }
 
     public synchronized void setMode(boolean mode) {
@@ -56,28 +52,5 @@ public class StateMonitor {
     public synchronized void unsetForcedMode() {
         forceMode = false;
         notifyAll();
-    }
-
-    public synchronized void synchronizeTimeStamps(int cameraIndex, long imageTimeStamp) {
-        if (lastTimeStamp < 0) {
-            lastTimeStamp = imageTimeStamp;
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (lastTimeStamp - imageTimeStamp > 0) {
-                System.out.println("Waiting: " + (lastTimeStamp - imageTimeStamp) + " for thread: " + Thread.currentThread().getId());
-                try {
-                    wait(lastTimeStamp - imageTimeStamp);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            lastTimeStamp = -1;
-            notify();
-        }
     }
 }

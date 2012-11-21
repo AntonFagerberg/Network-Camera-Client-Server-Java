@@ -17,9 +17,15 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class GUI2 extends JFrame {
+import local.StateMonitor;
 
+public class GUI2 extends JFrame implements ActionListener {
+
+	private final static int MODE_MOVIE = 1, MODE_IDLE = 0, MODE_AUTO = -1,
+			SYNC_SYNC = 1, SYNC_ASYNC = 0, SYNC_AUTO = -1;
 	private JPanel contentPane;
 	private ImageIcon image1;
 	private ImageIcon image2;
@@ -37,28 +43,15 @@ public class GUI2 extends JFrame {
 	private JLabel delayCamera1;
 	private JLabel delayCamera2;
 	private JRadioButton rbIdle, rbAuto, rbMovie, rbMovieAuto, rbSync, rbAsync;
+	private StateMonitor stateMonitor;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUI2 frame = new GUI2();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
-	public GUI2() {
-
+	public GUI2(StateMonitor stateMonitor) {
+		
+		this.stateMonitor = stateMonitor;
 		setTitle("Video Surveillance");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 861, 593);
@@ -179,6 +172,13 @@ public class GUI2 extends JFrame {
 		bgMode.add(rbMovie);
 		bgMode.add(rbMovieAuto);
 		bgMode.add(rbIdle);
+		
+		rbMovie.addActionListener(this);
+		rbMovieAuto.addActionListener(this);
+		rbIdle.addActionListener(this);
+		
+		
+		
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(4, 12, 106, 25);
@@ -196,7 +196,7 @@ public class GUI2 extends JFrame {
 
 	public void refreshCameraImage(byte[] jpeg, int cameraIndex) {
 		// image1 = new ImageIcon(jpeg);
-		// System.out.println("Image recieved");
+		// System.out.println("Image received");
 		// lbImage1.repaint();
 		Image image = getToolkit().createImage(jpeg);
 		getToolkit().prepareImage(image, -1, -1, null);
@@ -222,34 +222,41 @@ public class GUI2 extends JFrame {
 
 	}
 
-	public int getModeFromGui() {
+
+	
+								
+	
+	public void setModeInMonitor() {
 		if (rbMovie.isSelected()) {
-			return 1;
+			stateMonitor.setForcedMode(stateMonitor.MOVIE);
 		} else if (rbIdle.isSelected()) {
-			return 0;
-		} else if (rbMovieAuto.isSelected()) {
-			return -1;
+			stateMonitor.setForcedMode(stateMonitor.IDLE);
+		} else {
+			stateMonitor.setMode(stateMonitor.IDLE);
 		}
-		return 1337;
 	}
 
 	public int getSyncFromGui() {
 		if (rbSync.isSelected()) {
-			return 1;
+			return SYNC_SYNC;
 		} else if (rbAsync.isSelected()) {
-			return 0;
-		} else if (rbAuto.isSelected()) {
-			return -1;
+			return SYNC_ASYNC;
+		} else {
+			return SYNC_AUTO;
 		}
-		return 1338;
 	}
 
-	public void printDelayCamera1(long delay) {
-		delayCamera1.setText("Delay: " + delay);
+	public void printDelay(long delay, int cameraIndex) {
+		if (cameraIndex == 1) {
+			delayCamera1.setText("Delay: " + delay + " ms");
+		} else if (cameraIndex == 2) {
+			delayCamera2.setText("Delay: " + delay + " ms");
+		}
 	}
-
-	public void printDelayCamera2(long delay) {
-		delayCamera2.setText("Delay: " + delay);
+	
+	public void actionPerformed(ActionEvent e) {
+		setModeInMonitor();
 	}
-
+	
+	
 }

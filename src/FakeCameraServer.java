@@ -1,7 +1,7 @@
-import se.lth.cs.cameraproxy.Axis211A;
-import se.lth.cs.cameraproxy.MotionDetector;
+import se.lth.cs.fakecamera.Axis211A;
+import se.lth.cs.fakecamera.MotionDetector;
 
-public class CameraServer extends Thread {
+public class FakeCameraServer extends Thread {
     private ServerMonitor serverMonitor;
     private Axis211A camera;
     private MotionDetector motionDetector;
@@ -11,7 +11,7 @@ public class CameraServer extends Thread {
         UNSET_MOVIE = false;
 
 
-    public CameraServer(ServerMonitor serverMonitor, Axis211A camera, MotionDetector motionDetector) {
+    public FakeCameraServer(ServerMonitor serverMonitor, Axis211A camera, MotionDetector motionDetector) {
         this.serverMonitor = serverMonitor;
         this.camera = camera;
         this.motionDetector = motionDetector;
@@ -36,6 +36,6 @@ public class CameraServer extends Thread {
     }
 
     public static void main(String[] args) {
-        new CameraServer(new ServerMonitor(), new Axis211A("argus-8", 6655), new MotionDetector("argus-8", 6655));
+        new FakeCameraServer(new ServerMonitor(), new Axis211A(), new MotionDetector());
     }
 }

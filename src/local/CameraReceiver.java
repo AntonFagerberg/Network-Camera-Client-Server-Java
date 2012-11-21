@@ -1,6 +1,7 @@
 package local;
 
 import gui.GUI2;
+import se.lth.cs.cameraproxy.Axis211A;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +54,12 @@ public class CameraReceiver extends Thread {
                 bytesLeft -= inputStream.read(JPEGData, bytesExpected - bytesLeft, bytesLeft);
             }
 
+            timeStamp = 1000L*(((JPEGData[25]<0?256+JPEGData[25]:JPEGData[25])<<24)+((JPEGData[26]<0?256+JPEGData[26]:JPEGData[26])<<16)+
+                        ((JPEGData[27]<0?256+JPEGData[27]:JPEGData[27])<<8)+(JPEGData[28]<0?256+JPEGData[28]:JPEGData[28]))+
+                        10L*(JPEGData[29]<0?256+JPEGData[29]:JPEGData[29]);
 
+            stateMonitor.synchronizeTimeStamps(cameraIndex, timeStamp);
+            gui.refreshCameraImage(JPEGData.clone(),  cameraIndex);
 //            System.out.println(JPEGData[bytesExpected - 1]);
 
             if (JPEGData[0] == -1 && JPEGData[1] == -40 && JPEGData[bytesExpected - 2] == -1 && JPEGData[bytesExpected - 1] == -39) {

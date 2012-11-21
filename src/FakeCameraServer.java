@@ -34,8 +34,4 @@ public class FakeCameraServer extends Thread {
             }
         }
     }
-
-    public static void main(String[] args) {
-        new FakeCameraServer(new ServerMonitor(), new Axis211A(), new MotionDetector());
-    }
 }

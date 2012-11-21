@@ -14,8 +14,8 @@ public class Main {
         final GUI2 gui = new GUI2(stateMonitor);
         final Axis211A camera = new Axis211A();
 
-        (new CameraServer(serverMonitor1, camera, new MotionDetector())).start();
-        (new CameraServer(serverMonitor2, camera, new MotionDetector())).start();
+        (new FakeCameraServer(serverMonitor1, camera, new MotionDetector())).start();
+        (new FakeCameraServer(serverMonitor2, camera, new MotionDetector())).start();
 
         (new PictureSender(6077, serverMonitor1)).start();
         (new PictureSender(6078, serverMonitor2)).start();

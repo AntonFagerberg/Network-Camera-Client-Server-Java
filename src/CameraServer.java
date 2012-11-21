@@ -1,9 +1,9 @@
-package server;
+
 
 import se.lth.cs.fakecamera.Axis211A;
 import se.lth.cs.fakecamera.MotionDetector;
 
-public class CameraManager extends Thread {
+public class CameraServer extends Thread {
     private ServerMonitor serverMonitor;
     private Axis211A camera;
     private MotionDetector motionDetector;
@@ -13,7 +13,7 @@ public class CameraManager extends Thread {
         UNSET_MOVIE = false;
 
 
-    public CameraManager(ServerMonitor serverMonitor, Axis211A camera, MotionDetector motionDetector) {
+    public CameraServer(ServerMonitor serverMonitor, Axis211A camera, MotionDetector motionDetector) {
         this.serverMonitor = serverMonitor;
         this.camera = camera;
         this.motionDetector = motionDetector;

@@ -3,9 +3,7 @@ import local.CameraReceiver;
 import local.StateMonitor;
 import se.lth.cs.fakecamera.Axis211A;
 import se.lth.cs.fakecamera.MotionDetector;
-import server.CameraManager;
-import server.PictureSender;
-import server.ServerMonitor;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -16,8 +14,8 @@ public class Main {
         final GUI2 gui = new GUI2(stateMonitor);
         final Axis211A camera = new Axis211A();
 
-        (new CameraManager(serverMonitor1, camera, new MotionDetector())).start();
-        (new CameraManager(serverMonitor2, camera, new MotionDetector())).start();
+        (new CameraServer(serverMonitor1, camera, new MotionDetector())).start();
+        (new CameraServer(serverMonitor2, camera, new MotionDetector())).start();
 
         (new PictureSender(6077, serverMonitor1)).start();
         (new PictureSender(6078, serverMonitor2)).start();

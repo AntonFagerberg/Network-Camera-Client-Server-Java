@@ -68,7 +68,6 @@ public class CameraReceiver extends Thread {
                 gui.refreshCameraImage(JPEGData.get(1), 2);
                 gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
                 timeStamps[1] = -1;
-                System.out.println(System.currentTimeMillis() + " -> sync");
             } else if (synchronizedMode == GUI2.SYNC_SYNC || synchronizedMode == GUI2.SYNC_AUTO && timeStamps[0] < timeStamps[1]) {
                 gui.refreshCameraImage(JPEGData.get(0), 1);
                 gui.printDelay(System.currentTimeMillis() - timeStamps[0], 1);
@@ -80,6 +79,7 @@ public class CameraReceiver extends Thread {
                 gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
                 timeStamps[0] = -1;
                 timeStamps[1] = -1;
+                
             }
         }
     }

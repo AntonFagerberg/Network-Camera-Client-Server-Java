@@ -32,6 +32,7 @@ public class GUI2 extends JFrame implements ActionListener {
 	private JLabel delayCamera2;
 	private JRadioButton rbIdle, rbAuto, rbMovie, rbMovieAuto, rbSync, rbAsync;
 	private StateMonitor stateMonitor;
+	private JLabel lblCurrentSyncMode;
 
 
 	/**
@@ -100,13 +101,13 @@ public class GUI2 extends JFrame implements ActionListener {
 		ButtonGroup bgMode = new ButtonGroup();
 
 		panelActive = new JPanel();
-		panelActive.setBounds(448, 398, 328, 136);
+		panelActive.setBounds(448, 429, 328, 25);
 		contentPane.add(panelActive);
 		panelActive.setLayout(null);
-
-		lbActive = new JLabel("Movie mode triggered by Camera X");
-		lbActive.setBounds(0, 0, 304, 21);
-		panelActive.add(lbActive);
+		
+				lbActive = new JLabel("Movie mode triggered by Camera X");
+				lbActive.setBounds(0, 0, 304, 21);
+				panelActive.add(lbActive);
 
 		JPanel settingsContainer = new JPanel();
 		settingsContainer.setBorder(new LineBorder(new Color(184, 207, 229), 1,
@@ -175,6 +176,10 @@ public class GUI2 extends JFrame implements ActionListener {
 
 		JLabel lblSyncSettings = new JLabel("Sync settings");
 		panel_1.add(lblSyncSettings);
+				
+				lblCurrentSyncMode = new JLabel("Current sync mode: ");
+				lblCurrentSyncMode.setBounds(448, 408, 328, 15);
+				contentPane.add(lblCurrentSyncMode);
 
 		panelActive.setVisible(false);
 
@@ -229,5 +234,14 @@ public class GUI2 extends JFrame implements ActionListener {
 		setModeInMonitor();
 	}
 	
-	
+	public void changeSyncLabel(int text) {
+		switch(text){
+		case SYNC_SYNC:
+			lblCurrentSyncMode.setText("Current sync mode: Synchronous");
+			break;
+		case SYNC_ASYNC:
+			lblCurrentSyncMode.setText("Current sync mode: Asynchronous");
+			break;
+		}
+	}
 }

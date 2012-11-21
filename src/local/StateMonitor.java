@@ -39,6 +39,7 @@ public class StateMonitor {
     public synchronized void setMode(boolean mode) {
         if (!forceMode) {
             this.mode = mode;
+            System.out.println("setMode changed " + mode);
             notifyAll();
         }
     }
@@ -46,11 +47,13 @@ public class StateMonitor {
     public synchronized void setForcedMode(boolean mode) {
         forceMode = true;
         this.mode = mode;
+        System.out.println("setForceMode changed " + mode);
         notifyAll();
     }
 
     public synchronized void unsetForcedMode() {
         forceMode = false;
+        System.out.println("unsetForcedMode changed");
         notifyAll();
     }
 }

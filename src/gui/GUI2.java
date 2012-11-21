@@ -202,6 +202,7 @@ public class GUI2 extends JFrame implements ActionListener {
 		} else if (rbIdle.isSelected()) {
 			stateMonitor.setForcedMode(stateMonitor.IDLE);
 		} else {
+			stateMonitor.unsetForcedMode();
 			stateMonitor.setMode(stateMonitor.IDLE);
 		}
 	}

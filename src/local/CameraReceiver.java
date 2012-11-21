@@ -15,7 +15,7 @@ public class CameraReceiver extends Thread {
     private ArrayList<byte[]> JPEGData = new ArrayList<byte[]>(2);
     private byte[] JPEGDataSize = new byte[4];
     private long[] timeStamps = new long[2];
-    private int bytesLeft, bytesExpected;
+    private int bytesLeft, bytesExpected, synchronizedMode = GUI2.SYNC_AUTO;
 
 	public CameraReceiver(String url1, int port1, String url2, int port2, StateMonitor stateMonitor, GUI2 gui) {
         this.stateMonitor = stateMonitor;
@@ -62,15 +62,16 @@ public class CameraReceiver extends Thread {
                 }
             }
 
-            if (timeStamps[0] > timeStamps[1]) {
+            synchronizedMode = gui.getSyncFromGui();
+
+            if ((synchronizedMode == GUI2.SYNC_AUTO || synchronizedMode == GUI2.SYNC_SYNC) && timeStamps[0] > timeStamps[1]) {
                 gui.refreshCameraImage(JPEGData.get(1), 2);
                 gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
-//                System.out.println("0 delay: " + (timeStamps[0] - timeStamps[1]));
                 timeStamps[1] = -1;
-            } else if (timeStamps[0] < timeStamps[1]) {
+                System.out.println(System.currentTimeMillis() + " -> sync");
+            } else if (synchronizedMode == GUI2.SYNC_SYNC || synchronizedMode == GUI2.SYNC_AUTO && timeStamps[0] < timeStamps[1]) {
                 gui.refreshCameraImage(JPEGData.get(0), 1);
                 gui.printDelay(System.currentTimeMillis() - timeStamps[0], 1);
-//                System.out.println("1 delay: " + (timeStamps[1] - timeStamps[0]));
                 timeStamps[0] = -1;
             } else {
                 gui.refreshCameraImage(JPEGData.get(0), 1);

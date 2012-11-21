@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class GUI2 extends JFrame implements ActionListener {
 
-	private final static int MODE_MOVIE = 1, MODE_IDLE = 0, MODE_AUTO = -1,
+	public final static int MODE_MOVIE = 1, MODE_IDLE = 0, MODE_AUTO = -1,
 			SYNC_SYNC = 1, SYNC_ASYNC = 0, SYNC_AUTO = -1;
 	private JPanel contentPane;
 	private ImageIcon image1;

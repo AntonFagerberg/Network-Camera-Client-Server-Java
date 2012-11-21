@@ -214,8 +214,10 @@ public class GUI2 extends JFrame implements ActionListener {
 
 	public int getSyncFromGui() {
 		if (rbSync.isSelected()) {
+			changeSyncLabel(SYNC_SYNC);
 			return SYNC_SYNC;
 		} else if (rbAsync.isSelected()) {
+			changeSyncLabel(SYNC_ASYNC);
 			return SYNC_ASYNC;
 		} else {
 			return SYNC_AUTO;

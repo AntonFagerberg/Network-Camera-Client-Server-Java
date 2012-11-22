@@ -1,6 +1,6 @@
-package gui;
+package client;
 
-import local.StateMonitor;
+import client.ClientStateMonitor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,10 +10,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GUI2 extends JFrame implements ActionListener {
+public class GUI extends JFrame implements ActionListener {
 
-	public final static int MODE_MOVIE = 1, MODE_IDLE = 0, MODE_AUTO = -1,
-			SYNC_SYNC = 1, SYNC_ASYNC = 0, SYNC_AUTO = -1;
+	public final static int
+        SYNC_AUTO = -1,
+        SYNC_SYNC = 1,
+        SYNC_ASYNC = 0;
 	private JPanel contentPane;
 	private ImageIcon image1;
 	private ImageIcon image2;
@@ -31,16 +33,16 @@ public class GUI2 extends JFrame implements ActionListener {
 	private JLabel delayCamera1;
 	private JLabel delayCamera2;
 	private JRadioButton rbIdle, rbAuto, rbMovie, rbMovieAuto, rbSync, rbAsync;
-	private StateMonitor stateMonitor;
+	private ClientStateMonitor clientStateMonitor;
 	private JLabel lblCurrentSyncMode;
 
 
 	/**
 	 * Create the frame.
 	 */
-	public GUI2(StateMonitor stateMonitor) {
+	public GUI(ClientStateMonitor clientStateMonitor) {
 		
-		this.stateMonitor = stateMonitor;
+		this.clientStateMonitor = clientStateMonitor;
 		setTitle("Video Surveillance");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 861, 593);
@@ -105,9 +107,9 @@ public class GUI2 extends JFrame implements ActionListener {
 		contentPane.add(panelActive);
 		panelActive.setLayout(null);
 		
-				lbActive = new JLabel("Movie mode triggered by Camera X");
-				lbActive.setBounds(0, 0, 304, 21);
-				panelActive.add(lbActive);
+        lbActive = new JLabel("Movie mode triggered by Camera X");
+        lbActive.setBounds(0, 0, 304, 21);
+        panelActive.add(lbActive);
 
 		JPanel settingsContainer = new JPanel();
 		settingsContainer.setBorder(new LineBorder(new Color(184, 207, 229), 1,
@@ -183,6 +185,7 @@ public class GUI2 extends JFrame implements ActionListener {
 
 		panelActive.setVisible(false);
 
+        changeSyncLabel(SYNC_ASYNC);
 		setVisible(true);
 		setResizable(false);
 	}
@@ -197,18 +200,13 @@ public class GUI2 extends JFrame implements ActionListener {
 		}
 	}
 
-
-	
-								
-	
 	public void setModeInMonitor() {
 		if (rbMovie.isSelected()) {
-			stateMonitor.setForcedMode(stateMonitor.MOVIE);
+            clientStateMonitor.setMode(ClientStateMonitor.MOVIE_FORCED);
 		} else if (rbIdle.isSelected()) {
-			stateMonitor.setForcedMode(stateMonitor.IDLE);
+            clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
 		} else {
-			stateMonitor.unsetForcedMode();
-			stateMonitor.setMode(stateMonitor.IDLE);
+            clientStateMonitor.setMode(ClientStateMonitor.IDLE);
 		}
 	}
 
@@ -236,14 +234,14 @@ public class GUI2 extends JFrame implements ActionListener {
 		setModeInMonitor();
 	}
 	
-	public void changeSyncLabel(int text) {
-		switch(text){
-		case SYNC_SYNC:
-			lblCurrentSyncMode.setText("Current sync mode: Synchronous");
-			break;
-		case SYNC_ASYNC:
-			lblCurrentSyncMode.setText("Current sync mode: Asynchronous");
-			break;
+	public void changeSyncLabel(int mode) {
+		switch(mode){
+            case SYNC_SYNC:
+                lblCurrentSyncMode.setText("Current sync mode: Synchronous");
+                break;
+            case SYNC_ASYNC:
+                lblCurrentSyncMode.setText("Current sync mode: Asynchronous");
+                break;
 		}
 	}
 }

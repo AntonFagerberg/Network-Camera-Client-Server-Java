@@ -1,13 +1,16 @@
+package client;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
+import java.net.Socket;
 
-public class ServerStateSender extends Thread {
-    private int port, mode;
-    private ServerStateMonitor serverStateMonitor;
+public class ClientStateSender extends Thread {
+    private ClientStateMonitor clientStateMonitor;
+    private int port;
 
-    public ServerStateSender(int port, ServerStateMonitor serverStateMonitor) {
-        this.serverStateMonitor = serverStateMonitor;
+    public ClientStateSender(int port, ClientStateMonitor clientStateMonitor) {
+        this.clientStateMonitor = clientStateMonitor;
         this.port = port;
     }
 
@@ -15,7 +18,7 @@ public class ServerStateSender extends Thread {
         try {
             OutputStream outputStream = (new ServerSocket(port)).accept().getOutputStream();
             while (true) {
-                outputStream.write(serverStateMonitor.getModeBlocking());
+                outputStream.write(clientStateMonitor.getModeBlocking());
             }
         } catch (IOException e) {
             e.printStackTrace();

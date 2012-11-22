@@ -1,41 +1,80 @@
-import se.lth.cs.cameraproxy.Axis211A;
-import se.lth.cs.cameraproxy.MotionDetector;
+/* REMOVE ON C-BUILD */
+import se.lth.cs.fakecamera.Axis211A;
+import se.lth.cs.fakecamera.MotionDetector;
+/* END REMOVE ON C-BUILD */
+
+/* ADD ON C-BUILD */
+//import se.lth.cs.camera.Axis211A;
+//import se.lth.cs.camera.MotionDetector;
+/* END ADD ON C-BUILD */
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.nio.ByteBuffer;
 
 public class CameraServer extends Thread {
-    private ServerMonitor serverMonitor;
+    private ServerStateMonitor serverStateMonitor = new ServerStateMonitor();
+    private MotionDetector motionDetector = new MotionDetector();
+    private final static int WAIT_TIME = 5000;
     private Axis211A camera;
-    private MotionDetector motionDetector;
-    private byte[] JPEGData = new byte[Axis211A.IMAGE_BUFFER_SIZE];
-    private static final boolean
-        SET_MOVIE = true,
-        UNSET_MOVIE = false;
+    private int port;
 
+    public CameraServer(int picturePort, int stateSendPort, String stateReceiveAddress, int stateReceivePort) {
+        this.port = picturePort;
+        camera = new Axis211A();
+        (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
+        (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();
+    }
 
-    public CameraServer(ServerMonitor serverMonitor, Axis211A camera, MotionDetector motionDetector) {
-        this.serverMonitor = serverMonitor;
+    public CameraServer(int port, int stateSendPort, String stateReceiveAddress, int stateReceivePort, Axis211A camera) {
         this.camera = camera;
-        this.motionDetector = motionDetector;
+        this.port = port;
+        (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
+        (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();
     }
 
     public void run() {
-        int length;
-        boolean previousMode = UNSET_MOVIE;
+        try {
+            ServerSocket serverSocket = new ServerSocket(port);
+            OutputStream outputStream = serverSocket.accept().getOutputStream();
+            byte[] JPEGdata = new byte[Axis211A.IMAGE_BUFFER_SIZE];
+            int length, currentMode, previousMode = serverStateMonitor.getMode();
+            long waitTime;
 
-        while (true) {
-            length = camera.getJPEG(JPEGData, 0);
-            serverMonitor.storeJPEGData(JPEGData, length);
+            while (true) {
+                currentMode = serverStateMonitor.getMode();
+                if (currentMode == ServerStateMonitor.IDLE || currentMode == ServerStateMonitor.IDLE_FORCED) {
+                    waitTime = System.currentTimeMillis() + WAIT_TIME;
+                    while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
+                        try {
+                            sleep(50l);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-            if (motionDetector.detect() && previousMode == UNSET_MOVIE) {
-                serverMonitor.setMovie();
-                previousMode = SET_MOVIE;
-            } else if (!motionDetector.detect() && previousMode == SET_MOVIE) {
-                serverMonitor.unsetMovie();
-                previousMode = UNSET_MOVIE;
+                        currentMode = serverStateMonitor.getMode();
+                    }
+                }
+
+                length = camera.getJPEG(JPEGdata, 0);
+                outputStream.write(ByteBuffer.allocate(4).putInt(length).array());
+                outputStream.write(JPEGdata, 0, length);
+
+                if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
+                    serverStateMonitor.setMode(ServerStateMonitor.MOVIE);
+                } else if (previousMode == ServerStateMonitor.MOVIE && currentMode == ServerStateMonitor.MOVIE && !motionDetector.detect()) {
+                    serverStateMonitor.setMode(ServerStateMonitor.IDLE);
+                }
+
+               previousMode = currentMode;
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
-        new CameraServer(new ServerMonitor(), new Axis211A("argus-8", 6655), new MotionDetector("argus-8", 6655));
+//        (new CameraServer(6543, serverStateMonitor)).start();
     }
 }

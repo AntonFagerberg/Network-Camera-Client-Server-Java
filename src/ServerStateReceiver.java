@@ -1,35 +1,42 @@
-
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-
 public class ServerStateReceiver extends Thread {
-	ServerMonitor serverMonitor;
-	String url;
-	int port;
+    ServerStateMonitor serverStateMonitor;
+    String url;
+    int port;
 
-	public ServerStateReceiver(ServerMonitor serverMonitor, int port, String url) {
-		this.url = url;
-		this.port = port;
-		this.serverMonitor = serverMonitor;
-	}
+    public ServerStateReceiver(String url, int port, ServerStateMonitor serverStateMonitor) {
+        this.serverStateMonitor = serverStateMonitor;
+        this.port = port;
+        this.url = url;
+    }
 
-	public void run() {
-		try {
-			InputStream inputStream = (new Socket(url, port)).getInputStream();
-			System.out.println("ServerStateReceiver started at port: " + port + ".");
-			while (true) {
-				System.out.println("ServerStateReceiver waiting for msg");
-				int msg = inputStream.read();
-				serverMonitor.setMode(msg);
-				System.out.println("Received inputStream message: " + msg);
-			}
-		} catch (IOException e) {
-			System.out.println("Communication error with server: " + url + ":"
-					+ port + ".");
-			e.printStackTrace();
-		}
-	}
+    public void run() {
+        while (true) {
+            try {
+                InputStream inputStream = (new Socket(url, port)).getInputStream();
+                while (true) {
+                    switch (inputStream.read()) {
+                        case ServerStateMonitor.IDLE:
+                        case ServerStateMonitor.MOVIE:
+                            serverStateMonitor.unsetForcedMode();
+                            break;
+                        case ServerStateMonitor.IDLE_FORCED:
+                            serverStateMonitor.setMode(ServerStateMonitor.IDLE_FORCED);
+                            break;
+                        case ServerStateMonitor.MOVIE_FORCED:
+                            serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
+                            break;
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("[ServerStateReceiver] Connection failed: Sleeping 5 seconds...");
+                try {
+                    sleep(5000);
+                } catch (InterruptedException e1) { e1.printStackTrace(); }
+            }
+        }
+    }
 }

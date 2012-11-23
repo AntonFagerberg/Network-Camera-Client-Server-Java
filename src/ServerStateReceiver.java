@@ -11,6 +11,7 @@ public class ServerStateReceiver extends Thread {
         this.serverStateMonitor = serverStateMonitor;
         this.port = port;
         this.url = url;
+        System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: started.");
     }
 
     public void run() {
@@ -18,7 +19,10 @@ public class ServerStateReceiver extends Thread {
             try {
                 InputStream inputStream = (new Socket(url, port)).getInputStream();
                 while (true) {
-                    switch (inputStream.read()) {
+                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: waiting for input.");
+                    int mode = inputStream.read();
+                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: got mode: " + mode);
+                    switch (mode) {
                         case ServerStateMonitor.IDLE:
                         case ServerStateMonitor.MOVIE:
                             serverStateMonitor.unsetForcedMode();
@@ -32,7 +36,7 @@ public class ServerStateReceiver extends Thread {
                     }
                 }
             } catch (IOException e) {
-                System.out.println("[ServerStateReceiver] Connection failed: Sleeping 5 seconds...");
+                System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: connection failed, sleeping 5 seconds...");
                 try {
                     sleep(5000);
                 } catch (InterruptedException e1) { e1.printStackTrace(); }

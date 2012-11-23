@@ -20,6 +20,7 @@ public class CameraServer extends Thread {
     private int port;
 
     public CameraServer(int picturePort, int stateSendPort, String stateReceiveAddress, int stateReceivePort) {
+        System.out.println("[" + System.currentTimeMillis() + "] CameraServer: started.");
         this.port = picturePort;
         camera = new Axis211A();
         (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
@@ -42,8 +43,10 @@ public class CameraServer extends Thread {
             long waitTime;
 
             while (true) {
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: waiting for picture.");
                 currentMode = serverStateMonitor.getMode();
                 if (currentMode == ServerStateMonitor.IDLE || currentMode == ServerStateMonitor.IDLE_FORCED) {
+                    System.out.println("[" + System.currentTimeMillis() + "] CameraServer: idle, waiting.");
                     waitTime = System.currentTimeMillis() + WAIT_TIME;
                     while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
                         try {
@@ -56,6 +59,8 @@ public class CameraServer extends Thread {
                 }
 
                 length = camera.getJPEG(JPEGdata, 0);
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: got picture with length: " + length);
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: sending picture length.");
                 outputStream.write(
                     new byte[] {
                         (byte) (length >>> 24),
@@ -64,13 +69,17 @@ public class CameraServer extends Thread {
                         (byte) length
                     }
                 );
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: sending picture data.");
                 outputStream.write(JPEGdata, 0, length);
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: picture sent.");
 
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: looking for motion: starting.");
                 if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
                     serverStateMonitor.setMode(ServerStateMonitor.MOVIE);
                 } else if (previousMode == ServerStateMonitor.MOVIE && currentMode == ServerStateMonitor.MOVIE && !motionDetector.detect()) {
                     serverStateMonitor.setMode(ServerStateMonitor.IDLE);
                 }
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: looking for motion: done.");
 
                previousMode = currentMode;
             }

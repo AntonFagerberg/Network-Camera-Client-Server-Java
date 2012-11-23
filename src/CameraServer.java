@@ -48,11 +48,10 @@ public class CameraServer extends Thread {
                     waitTime = System.currentTimeMillis() + WAIT_TIME;
                     while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
                         try {
-                            sleep(50l);
+                            sleep(100l);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
                         currentMode = serverStateMonitor.getMode();
                     }
                 }
@@ -75,6 +74,6 @@ public class CameraServer extends Thread {
     }
 
     public static void main(String[] args) {
-//        (new CameraServer(6543, serverStateMonitor)).start();
+        (new CameraServer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]))).start();
     }
 }

@@ -13,7 +13,7 @@ public class Main {
                 "localhost", 6080, 6082, 6081
         );
         cameraClient.start();
-        HTTPServer httpServer = new HTTPServer(6083,cameraClient);
+        HTTPServer httpServer = new HTTPServer(1337,cameraClient);
         try{
         	httpServer.handleRequests();
         }catch(Exception e){

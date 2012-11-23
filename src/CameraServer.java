@@ -11,7 +11,6 @@ import se.lth.cs.fakecamera.MotionDetector;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.nio.ByteBuffer;
 
 public class CameraServer extends Thread {
     private ServerStateMonitor serverStateMonitor = new ServerStateMonitor();
@@ -57,7 +56,14 @@ public class CameraServer extends Thread {
                 }
 
                 length = camera.getJPEG(JPEGdata, 0);
-                outputStream.write(ByteBuffer.allocate(4).putInt(length).array());
+                outputStream.write(
+                    new byte[] {
+                        (byte) (length >>> 24),
+                        (byte) (length >>> 16),
+                        (byte) (length >>> 8),
+                        (byte) length
+                    }
+                );
                 outputStream.write(JPEGdata, 0, length);
 
                 if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {

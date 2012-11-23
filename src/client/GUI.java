@@ -41,7 +41,7 @@ public class GUI extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
-	public GUI(ClientStateMonitor clientStateMonitor) {
+	public GUI(ClientStateMonitor clientStateMonitor, String camera1, String camera2) {
 		
 		this.clientStateMonitor = clientStateMonitor;
 		setTitle("Video Surveillance");
@@ -54,16 +54,16 @@ public class GUI extends JFrame implements ActionListener {
 
 		// Initialization
 		borderGrayCam1 = new TitledBorder(new LineBorder(new Color(184, 207,
-				229)), "Camera1", TitledBorder.LEADING, TitledBorder.TOP, null,
+				229)), camera1, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 		borderRedCam1 = new TitledBorder(new LineBorder(new Color(255, 0, 0)),
-				"Camera1", TitledBorder.LEADING, TitledBorder.TOP, null,
+				camera1, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 		borderGrayCam2 = new TitledBorder(new LineBorder(new Color(184, 207,
-				229)), "Camera2", TitledBorder.LEADING, TitledBorder.TOP, null,
+				229)), camera2, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 		borderRedCam2 = new TitledBorder(new LineBorder(new Color(255, 0, 0)),
-				"Camera2", TitledBorder.LEADING, TitledBorder.TOP, null,
+				camera2, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 
 		image1 = new ImageIcon();
@@ -250,7 +250,7 @@ public class GUI extends JFrame implements ActionListener {
 			case MOVIE:
 				panel1.setBorder(borderRedCam1);
 				panel2.setBorder(borderRedCam2);
-				lbActive.setText("Movie mode triggered by" + url);
+				lbActive.setText("Movie mode triggered by " + url);
 				panelActive.setVisible(true);
 				break;
 			case IDLE:

@@ -16,7 +16,7 @@ public class CameraClient extends Thread {
 
 	public CameraClient(String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
         ClientStateMonitor clientStateMonitor = new ClientStateMonitor();
-        gui = new GUI(clientStateMonitor);
+        gui = new GUI(clientStateMonitor, serverAddress1, serverAddress2);
         try {
             inputStreams = new InputStream[]{
                 (new Socket(serverAddress1, serverPicturePort1)).getInputStream(),

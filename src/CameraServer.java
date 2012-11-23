@@ -11,7 +11,6 @@ import se.lth.cs.fakecamera.MotionDetector;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.nio.ByteBuffer;
 
 public class CameraServer extends Thread {
     private ServerStateMonitor serverStateMonitor = new ServerStateMonitor();
@@ -48,17 +47,23 @@ public class CameraServer extends Thread {
                     waitTime = System.currentTimeMillis() + WAIT_TIME;
                     while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
                         try {
-                            sleep(50l);
+                            sleep(100l);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
                         currentMode = serverStateMonitor.getMode();
                     }
                 }
 
                 length = camera.getJPEG(JPEGdata, 0);
-                outputStream.write(ByteBuffer.allocate(4).putInt(length).array());
+                outputStream.write(
+                    new byte[] {
+                        (byte) (length >>> 24),
+                        (byte) (length >>> 16),
+                        (byte) (length >>> 8),
+                        (byte) length
+                    }
+                );
                 outputStream.write(JPEGdata, 0, length);
 
                 if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
@@ -75,6 +80,10 @@ public class CameraServer extends Thread {
     }
 
     public static void main(String[] args) {
-//        (new CameraServer(6543, serverStateMonitor)).start();
+        if (args.length == 4) {
+            (new CameraServer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]))).start();
+        } else {
+            (new CameraServer(6600, 6601, "mars-10", 6602)).start();
+        }
     }
 }

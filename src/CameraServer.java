@@ -89,10 +89,6 @@ public class CameraServer extends Thread {
     }
 
     public static void main(String[] args) {
-        if (args.length == 4) {
-            (new CameraServer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]))).start();
-        } else {
-            (new CameraServer(6600, 6601, "mars-10", 6602)).start();
-        }
+        (new CameraServer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]))).start();
     }
 }

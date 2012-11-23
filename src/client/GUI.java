@@ -15,7 +15,9 @@ public class GUI extends JFrame implements ActionListener {
 	public final static int
         SYNC_AUTO = -1,
         SYNC_SYNC = 1,
-        SYNC_ASYNC = 0;
+        SYNC_ASYNC = 0,
+		IDLE = 0,
+		MOVIE = 1;
 	private JPanel contentPane;
 	private ImageIcon image1;
 	private ImageIcon image2;
@@ -28,7 +30,6 @@ public class GUI extends JFrame implements ActionListener {
 	private TitledBorder borderGrayCam2;
 	private TitledBorder borderRedCam2;
 	private JPanel panelActive;
-	private boolean isIdle;
 	private JLabel lbActive;
 	private JLabel delayCamera1;
 	private JLabel delayCamera2;
@@ -52,7 +53,6 @@ public class GUI extends JFrame implements ActionListener {
 		contentPane.setLayout(null);
 
 		// Initialization
-		isIdle = true;
 		borderGrayCam1 = new TitledBorder(new LineBorder(new Color(184, 207,
 				229)), "Camera1", TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
@@ -207,6 +207,7 @@ public class GUI extends JFrame implements ActionListener {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
 		} else {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE);
+            changeMovieMode(IDLE, "IDLE");
 		}
 	}
 
@@ -242,6 +243,21 @@ public class GUI extends JFrame implements ActionListener {
             case SYNC_ASYNC:
                 lblCurrentSyncMode.setText("Current sync mode: Asynchronous");
                 break;
+		}
+	}
+	public void changeMovieMode(int mode, String url){
+		switch(mode){
+			case MOVIE:
+				panel1.setBorder(borderRedCam1);
+				panel2.setBorder(borderRedCam2);
+				lbActive.setText("Movie mode triggered by" + url);
+				panelActive.setVisible(true);
+				break;
+			case IDLE:
+				panel1.setBorder(borderGrayCam1);
+				panel2.setBorder(borderGrayCam2);				
+				panelActive.setVisible(false);
+				break;
 		}
 	}
 }

@@ -8,11 +8,13 @@ public class ClientStateReceiver extends Thread {
     private ClientStateMonitor clientStateMonitor;
     private String url;
     private int port;
+    private GUI gui;
 
-    public ClientStateReceiver(String url, int port, ClientStateMonitor clientStateMonitor) {
+    public ClientStateReceiver(String url, int port, ClientStateMonitor clientStateMonitor, GUI gui) {
         this.url = url;
         this.port = port;
         this.clientStateMonitor = clientStateMonitor;
+        this.gui = gui;
     }
 
     public void run() {
@@ -20,7 +22,10 @@ public class ClientStateReceiver extends Thread {
             try {
                 InputStream inputStream = (new Socket(url, port)).getInputStream();
                 while (true) {
-                    clientStateMonitor.setMode(inputStream.read());
+                	int mode = inputStream.read();
+                    clientStateMonitor.setMode(mode);
+                    gui.changeMovieMode(mode,url);
+                    
                 }
             } catch (IOException e) {
                 System.out.println("[ClientStateReceiver] Connection failed: Sleeping 5 seconds...");

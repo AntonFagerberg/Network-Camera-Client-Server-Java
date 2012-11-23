@@ -16,7 +16,7 @@ public class CameraClient extends Thread {
 
 	public CameraClient(String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
         ClientStateMonitor clientStateMonitor = new ClientStateMonitor();
-
+        gui = new GUI(clientStateMonitor);
         try {
             inputStreams = new InputStream[]{
                 (new Socket(serverAddress1, serverPicturePort1)).getInputStream(),
@@ -25,13 +25,13 @@ public class CameraClient extends Thread {
 
             (new ClientStateSender(serverReceivePort1, clientStateMonitor)).start();
             (new ClientStateSender(serverReceivePort2, clientStateMonitor)).start();
-            (new ClientStateReceiver(serverAddress1, serverSendPort1, clientStateMonitor)).start();
-            (new ClientStateReceiver(serverAddress2, serverSendPort2, clientStateMonitor)).start();
+            (new ClientStateReceiver(serverAddress1, serverSendPort1, clientStateMonitor,gui)).start();
+            (new ClientStateReceiver(serverAddress2, serverSendPort2, clientStateMonitor,gui)).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        gui = new GUI(clientStateMonitor);
+
     }
 
     private void fillData(int i) {

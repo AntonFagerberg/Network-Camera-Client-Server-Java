@@ -1,3 +1,5 @@
+package server;
+
 import client.CameraClient;
 import se.lth.cs.fakecamera.Axis211A;
 

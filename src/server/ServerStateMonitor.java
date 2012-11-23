@@ -1,3 +1,5 @@
+package server;
+
 public class ServerStateMonitor {
     public final static int
         IDLE = 0,

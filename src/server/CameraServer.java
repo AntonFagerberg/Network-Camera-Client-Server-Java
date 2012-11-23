@@ -1,4 +1,4 @@
-/* REMOVE ON C-BUILD */
+package server;/* REMOVE ON C-BUILD */
 import se.lth.cs.fakecamera.Axis211A;
 import se.lth.cs.fakecamera.MotionDetector;
 /* END REMOVE ON C-BUILD */

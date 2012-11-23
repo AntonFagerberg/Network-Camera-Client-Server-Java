@@ -1,7 +1,6 @@
-package server;
-
 import client.CameraClient;
 import se.lth.cs.fakecamera.Axis211A;
+import server.CameraServer;
 
 public class Main {
     public static void main(String[] args) {

@@ -30,8 +30,6 @@ public class CameraClient extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void fillData(int i) {

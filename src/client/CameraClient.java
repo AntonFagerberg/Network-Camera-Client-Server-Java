@@ -13,14 +13,16 @@ public class CameraClient extends Thread {
     private byte[] JPEGDataSize = new byte[4];
     private long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
+    private HTTPMonitor httpMonitor;
     public volatile boolean alive;
     private ClientStateSender css1,css2;
     private ClientStateReceiver csr1,csr2;
     private ClientStateMonitor clientStateMonitor;
 
-	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
+	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, HTTPMonitor httpMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
 		this.gui = gui;
 		this.clientStateMonitor = clientStateMonitor;
+		this.httpMonitor = httpMonitor;
         
 		try {
             inputStreams = new InputStream[]{
@@ -67,10 +69,7 @@ public class CameraClient extends Thread {
             ((JPEGData.get(i)[27]<0?256+JPEGData.get(i)[27]:JPEGData.get(i)[27])<<8)+(JPEGData.get(i)[28]<0?256+JPEGData.get(i)[28]:JPEGData.get(i)[28]))+
             10L*(JPEGData.get(i)[29]<0?256+JPEGData.get(i)[29]:JPEGData.get(i)[29]);
     }
-    public byte[] getJPEG() {
-		return JPEGData.get(0);
-    	
-    }
+
     
 
     public void run() {
@@ -106,12 +105,14 @@ public class CameraClient extends Thread {
                 timeStamps[0] = -1;
                 timeStamps[1] = -1;
             }
+            
+            if(httpMonitor.checkState()){
+            	httpMonitor.storeImage(JPEGData.get(0));
+            }
         }
-        css1.alive = false;
-        css2.alive = false;
-        csr1.alive = false;
-        csr2.alive = false;
-        clientStateMonitor.notifyAll();
-        System.out.println("Cheers mate!");
+//        css1.alive = false;
+//        css2.alive = false;
+//        csr1.alive = false;
+//        csr2.alive = false;
     }
 }

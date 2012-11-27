@@ -36,6 +36,5 @@ public class ClientStateReceiver extends Thread {
                 } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
         }
-        System.out.println("Laters");
     }
 }

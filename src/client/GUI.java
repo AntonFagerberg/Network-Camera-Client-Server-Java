@@ -43,9 +43,12 @@ public class GUI extends JFrame implements ActionListener {
 	private ClientStateMonitor clientStateMonitor;
 	private CameraClient cameraClient;
 	private String camera1, camera2;
+	private HTTPMonitor httpMonitor;
+	private HTTPServer httpServer;
 	private JPanel panel_4;
 	private JButton btnConnect;
 	private JButton btnDisconnect;
+
 
 
 
@@ -54,9 +57,22 @@ public class GUI extends JFrame implements ActionListener {
 	 */
 	public GUI() {
 		//Starting up system
+
 		camera1 = "localhost";
 		camera2 = "localhost";
+		clientStateMonitor = new ClientStateMonitor();
+		httpMonitor = new HTTPMonitor();
+		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
+             camera1, 6077, 6079, 6078,
+             camera2, 6080, 6082, 6081);
+		httpServer = new HTTPServer(1337, httpMonitor);
+		cameraClient.start();
+		httpServer.start();
+
+		camera1 = "130.235.35.85";
+		camera2 = "130.235.35.85";
 		
+
 		
 		
 		//Setting up gui
@@ -185,7 +201,7 @@ public class GUI extends JFrame implements ActionListener {
 		rbMovieAuto.addActionListener(this);
 		rbMovieAuto.setActionCommand("radiobutton");
 		rbIdle.addActionListener(this);
-		rbMovieAuto.setActionCommand("radiobutton");
+		rbIdle.setActionCommand("radiobutton");
 		
 		
 		
@@ -272,7 +288,7 @@ public class GUI extends JFrame implements ActionListener {
 			setModeInMonitor();
 		}else if(str.equals("connect")){
 			clientStateMonitor = new ClientStateMonitor();
-			cameraClient = new CameraClient(this,clientStateMonitor,
+			cameraClient = new CameraClient(this,clientStateMonitor, httpMonitor,
 	             camera1, 6077, 6079, 6078,
 	             camera2, 6080, 6082, 6081);
 			cameraClient.start();

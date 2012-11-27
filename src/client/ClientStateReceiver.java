@@ -9,8 +9,10 @@ public class ClientStateReceiver extends Thread {
     private String url;
     private int port;
     private GUI gui;
+    public volatile boolean alive;
 
     public ClientStateReceiver(String url, int port, ClientStateMonitor clientStateMonitor, GUI gui) {
+    	alive = true;
         this.url = url;
         this.port = port;
         this.clientStateMonitor = clientStateMonitor;
@@ -18,7 +20,7 @@ public class ClientStateReceiver extends Thread {
     }
 
     public void run() {
-        while (true) {
+        while (alive) {
             try {
                 InputStream inputStream = (new Socket(url, port)).getInputStream();
                 while (true) {
@@ -34,5 +36,6 @@ public class ClientStateReceiver extends Thread {
                 } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
         }
+        System.out.println("Laters");
     }
 }

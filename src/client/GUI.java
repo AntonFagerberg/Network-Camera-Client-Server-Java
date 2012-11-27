@@ -18,22 +18,22 @@ public class GUI extends JFrame implements ActionListener {
         SYNC_ASYNC = 0,
 		IDLE = 0,
 		MOVIE = 1;
-	private JPanel contentPane,
-					panel1,
-					panel2,
-					panelActive;
-	private ImageIcon image1,
-					image2;
-	private JLabel lbImage1,
-					lbImage2,
-					lbActive,
-					delayCamera1,
-					delayCamera2,
-					lblCurrentSyncMode;
+	private JPanel 		contentPane,
+						panel1,
+						panel2,
+						panelActive;
+	private ImageIcon 	image1,
+						image2;
+	private JLabel 		lbImage1,
+						lbImage2,
+						lbActive,
+						delayCamera1,
+						delayCamera2,
+						lblCurrentSyncMode;
 	private TitledBorder borderGrayCam1,
-	 						borderRedCam1,
-	 						borderGrayCam2,
-	 						borderRedCam2;
+	 					borderRedCam1,
+	 					borderGrayCam2,
+	 					borderRedCam2;
 	private JRadioButton rbIdle, 
 						rbAuto, 
 						rbMovie, 
@@ -45,9 +45,7 @@ public class GUI extends JFrame implements ActionListener {
 	private String camera1, camera2;
 	private HTTPMonitor httpMonitor;
 	private HTTPServer httpServer;
-	private JPanel panel_4;
-	private JButton btnConnect;
-	private JButton btnDisconnect;
+
 
 
 
@@ -58,13 +56,13 @@ public class GUI extends JFrame implements ActionListener {
 	public GUI() {
 		//Starting up system
 
-		camera1 = "localhost";
-		camera2 = "localhost";
+		camera1 = "argus-1";
+		camera2 = "argus-4";
 		clientStateMonitor = new ClientStateMonitor();
 		httpMonitor = new HTTPMonitor();
 		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
-             camera1, 6077, 6079, 6078,
-             camera2, 6080, 6082, 6081);
+             camera1, 6610, 6612, 6611,
+             camera2, 6600, 6602, 6601);
 		httpServer = new HTTPServer(1337, httpMonitor);
 		cameraClient.start();
 		httpServer.start();
@@ -216,21 +214,6 @@ public class GUI extends JFrame implements ActionListener {
 				lblCurrentSyncMode.setBounds(448, 408, 328, 15);
 				contentPane.add(lblCurrentSyncMode);
 				
-				panel_4 = new JPanel();
-				panel_4.setBounds(448, 485, 328, 41);
-				contentPane.add(panel_4);
-				panel_4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-				
-				btnConnect = new JButton("Connect");
-				panel_4.add(btnConnect);
-				
-				btnDisconnect = new JButton("Do not push!!!");
-				panel_4.add(btnDisconnect);
-				
-				btnConnect.addActionListener(this);
-				btnConnect.setActionCommand("connect");
-				btnDisconnect.addActionListener(this);
-				btnDisconnect.setActionCommand("disconnect");
 				
 		panelActive.setVisible(false);
 
@@ -286,14 +269,6 @@ public class GUI extends JFrame implements ActionListener {
 		if(str.equals("radiobutton")){
 			System.out.println("tjohaej");
 			setModeInMonitor();
-		}else if(str.equals("connect")){
-			clientStateMonitor = new ClientStateMonitor();
-			cameraClient = new CameraClient(this,clientStateMonitor, httpMonitor,
-	             camera1, 6077, 6079, 6078,
-	             camera2, 6080, 6082, 6081);
-			cameraClient.start();
-		}else if(str.equals("disconnect")){
-			cameraClient.alive = false;
 		}
 	}
 	

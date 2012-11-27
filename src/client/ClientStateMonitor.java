@@ -22,4 +22,13 @@ public class ClientStateMonitor {
             notifyAll();
         }
     }
+    
+    public synchronized void unsetForced(){
+    	if(mode == IDLE_FORCED){
+    		mode = IDLE;
+    	} else if (mode == MOVIE_FORCED){
+    		mode = MOVIE;
+    	}
+    	notifyAll();
+    }
 }

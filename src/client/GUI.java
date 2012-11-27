@@ -257,8 +257,7 @@ public class GUI extends JFrame implements ActionListener {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
             changeMovieMode(IDLE, "");
 		} else {
-            clientStateMonitor.setMode(ClientStateMonitor.IDLE);
-            changeMovieMode(IDLE, "");
+			clientStateMonitor.unsetForced();
 		}
 	}
 

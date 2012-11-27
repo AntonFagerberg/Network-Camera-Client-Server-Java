@@ -54,18 +54,8 @@ public class GUI extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public GUI() {
-		//Starting up system
+		
 
-		camera1 = "argus-1";
-		camera2 = "argus-4";
-		clientStateMonitor = new ClientStateMonitor();
-		httpMonitor = new HTTPMonitor();
-		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
-             camera1, 6610, 6612, 6611,
-             camera2, 6600, 6602, 6601);
-		httpServer = new HTTPServer(1337, httpMonitor);
-		cameraClient.start();
-		httpServer.start();
 
 		
 
@@ -193,14 +183,8 @@ public class GUI extends JFrame implements ActionListener {
 		bgMode.add(rbIdle);
 		
 		rbMovie.addActionListener(this);
-		rbMovie.setActionCommand("radiobutton");
 		rbMovieAuto.addActionListener(this);
-		rbMovieAuto.setActionCommand("radiobutton");
 		rbIdle.addActionListener(this);
-		rbIdle.setActionCommand("radiobutton");
-		
-		
-		
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(4, 12, 106, 25);
@@ -210,9 +194,9 @@ public class GUI extends JFrame implements ActionListener {
 		JLabel lblSyncSettings = new JLabel("Sync settings");
 		panel_1.add(lblSyncSettings);
 				
-				lblCurrentSyncMode = new JLabel("Current sync mode: ");
-				lblCurrentSyncMode.setBounds(448, 408, 328, 15);
-				contentPane.add(lblCurrentSyncMode);
+		lblCurrentSyncMode = new JLabel("Current sync mode: ");
+		lblCurrentSyncMode.setBounds(448, 408, 328, 15);
+		contentPane.add(lblCurrentSyncMode);
 				
 				
 		panelActive.setVisible(false);
@@ -220,6 +204,19 @@ public class GUI extends JFrame implements ActionListener {
         changeSyncLabel(SYNC_ASYNC);
 		setVisible(true);
 		setResizable(false);
+		
+		//Starting up system
+
+		camera1 = "lo-9";
+		camera2 = "lo-9";
+		clientStateMonitor = new ClientStateMonitor();
+		httpMonitor = new HTTPMonitor();
+		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
+			 camera1, 6610, 6612, 6611,
+             camera2, 6600, 6602, 6601);
+		httpServer = new HTTPServer(1337, httpMonitor);
+		cameraClient.start();
+		httpServer.start();
 	}
 
 	public void refreshCameraImage(byte[] jpeg, int cameraIndex) {
@@ -265,11 +262,8 @@ public class GUI extends JFrame implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		String str = e.getActionCommand();
-		if(str.equals("radiobutton")){
-			System.out.println("tjohaej");
 			setModeInMonitor();
-		}
+			System.out.println("radiobutton pushed!");
 	}
 	
 	public void changeSyncLabel(int mode) {

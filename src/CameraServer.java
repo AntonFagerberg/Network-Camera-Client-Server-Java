@@ -56,6 +56,7 @@ public class CameraServer extends Thread {
                     }
                 }
 
+                System.out.println("[" + System.currentTimeMillis() + "] CameraServer: calling camera.");
                 length = camera.getJPEG(JPEGdata, 0);
                 outputStream.write(
                     new byte[] {
@@ -69,9 +70,9 @@ public class CameraServer extends Thread {
 
                 if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
                     serverStateMonitor.setMode(ServerStateMonitor.MOVIE);
-                } else if (previousMode == ServerStateMonitor.MOVIE && currentMode == ServerStateMonitor.MOVIE && !motionDetector.detect()) {
+                }/* else if (previousMode == ServerStateMonitor.MOVIE && currentMode == ServerStateMonitor.MOVIE && !motionDetector.detect()) {
                     serverStateMonitor.setMode(ServerStateMonitor.IDLE);
-                }
+                }*/
 
                previousMode = currentMode;
             }

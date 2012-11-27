@@ -19,7 +19,6 @@ public class CameraClient extends Thread {
     private ClientStateMonitor clientStateMonitor;
 
 	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
-        
 		this.gui = gui;
 		this.clientStateMonitor = clientStateMonitor;
         

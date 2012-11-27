@@ -54,8 +54,8 @@ public class GUI extends JFrame implements ActionListener {
 	 */
 	public GUI() {
 		//Starting up system
-		camera1 = "localhost";
-		camera2 = "localhost";
+		camera1 = "130.235.35.85";
+		camera2 = "130.235.35.85";
 		
 		
 		
@@ -185,7 +185,7 @@ public class GUI extends JFrame implements ActionListener {
 		rbMovieAuto.addActionListener(this);
 		rbMovieAuto.setActionCommand("radiobutton");
 		rbIdle.addActionListener(this);
-		rbMovieAuto.setActionCommand("radiobutton");
+		rbIdle.setActionCommand("radiobutton");
 		
 		
 		

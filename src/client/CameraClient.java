@@ -107,11 +107,9 @@ public class CameraClient extends Thread {
                 timeStamps[1] = -1;
             }
         }
-        css1.alive = false;
-        css2.alive = false;
-        csr1.alive = false;
-        csr2.alive = false;
-        clientStateMonitor.notifyAll();
-        System.out.println("Cheers mate!");
+//        css1.alive = false;
+//        css2.alive = false;
+//        csr1.alive = false;
+//        csr2.alive = false;
     }
 }

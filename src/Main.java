@@ -4,6 +4,8 @@ import se.lth.cs.fakecamera.Axis211A;
 public class Main {
 	public static void main(String[] args) {
         String
+            clientURL1 = "192.168.255.218",
+            clientURL2 = "192.168.255.218",
             serverURL1 = "localhost",
             serverURL2 = "localhost";
         int
@@ -15,8 +17,8 @@ public class Main {
             stateReceivePort2 = 6612;
 
         Axis211A camera = new Axis211A();
-        (new CameraServer(pictureReceivePort1, stateSendPort1, serverURL1, stateReceivePort1, camera)).start();
-        (new CameraServer(pictureReceivePort2, stateSendPort2, serverURL2, stateReceivePort2, camera)).start();
+        (new CameraServer(pictureReceivePort1, stateSendPort1, clientURL1, stateReceivePort1, camera)).start();
+        (new CameraServer(pictureReceivePort2, stateSendPort2, clientURL2, stateReceivePort2, camera)).start();
 ///*
         HTTPMonitor httpMonitor = new HTTPMonitor();
         ClientStateMonitor clientStateMonitor = new ClientStateMonitor();

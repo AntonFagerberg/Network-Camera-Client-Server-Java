@@ -10,6 +10,7 @@ import se.lth.cs.fakecamera.MotionDetector;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 public class CameraServer extends Thread {
@@ -20,7 +21,6 @@ public class CameraServer extends Thread {
     private int port;
 
     public CameraServer(int picturePort, int stateSendPort, String stateReceiveAddress, int stateReceivePort) {
-        System.out.println("CameraServer: started.");
         this.port = picturePort;
         camera = new Axis211A();
         (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
@@ -39,86 +39,56 @@ public class CameraServer extends Thread {
         int length, currentMode, previousMode = serverStateMonitor.getMode();
         long waitTime;
         ServerSocket serverSocket = null;
-        OutputStream outputStream = null;
+        OutputStream outputStream;
+
+        try {
+            serverSocket = new ServerSocket();
+            serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(port));
+            System.out.println("[CameraServer] Started on port: " + port + ".");
+        } catch (IOException e) {
+            System.err.println("[CameraServer] Could not start ServerSocket on port: " + port + ".");
+            System.exit(1);
+        }
 
         while (true) {
             try {
-                serverSocket = new ServerSocket(port);
-            } catch (IOException e) {
-                System.err.println("CameraServer: failed to create ServerSocket on port :" + port + ". Will retry in 5 seconds.");
-                try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
-            }
+                outputStream = serverSocket.accept().getOutputStream();
 
-            if (serverSocket != null) {
-                try {
-                    outputStream = serverSocket.accept().getOutputStream();
-                } catch (IOException e) {
-                    System.err.println("CameraServer: failed to get OutputStream.");
-                }
-
-                if (outputStream != null) {
-                    try {
-                        while (true) {
-                            System.out.println("CameraServer: waiting for picture.");
+                while (true) {
+                    currentMode = serverStateMonitor.getMode();
+                    if (currentMode == ServerStateMonitor.IDLE || currentMode == ServerStateMonitor.IDLE_FORCED) {
+                        waitTime = System.currentTimeMillis() + WAIT_TIME;
+                        while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
+                            try { sleep(100l); } catch (InterruptedException e) { e.printStackTrace(); }
                             currentMode = serverStateMonitor.getMode();
-                            if (currentMode == ServerStateMonitor.IDLE || currentMode == ServerStateMonitor.IDLE_FORCED) {
-                                System.out.println("CameraServer: idle, waiting.");
-                                waitTime = System.currentTimeMillis() + WAIT_TIME;
-                                while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
-                                    try {
-                                        sleep(100l);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    currentMode = serverStateMonitor.getMode();
-                                }
-                            }
-
-                            System.out.println("CameraServer: calling camera.");
-                            length = camera.getJPEG(JPEGdata, 0);
-                            System.out.println("CameraServer: got picture with length: " + length);
-                            outputStream.write(
-                                    new byte[] {
-                                            (byte) (length >>> 24),
-                                            (byte) (length >>> 16),
-                                            (byte) (length >>> 8),
-                                            (byte) length
-                                    }
-                            );
-
-                            System.out.println("CameraServer: sending picture data.");
-                            outputStream.write(JPEGdata, 0, length);
-                            System.out.println("CameraServer: picture sent.");
-
-                            System.out.println("CameraServer: looking for motion: starting.");
-                            if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
-                                serverStateMonitor.setMode(ServerStateMonitor.MOVIE);
-                            }
-                            System.out.println("CameraServer: looking for motion: done.");
-
-                            previousMode = currentMode;
                         }
-                    } catch (IOException e) {
-                        System.err.println("CameraServer: outputStream aborted.");
                     }
 
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        System.err.println("CameraServer: failed to close OutputStream.");
+                    length = camera.getJPEG(JPEGdata, 0);
+                    outputStream.write(
+                        new byte[] {
+                            (byte) (length >>> 24),
+                            (byte) (length >>> 16),
+                            (byte) (length >>> 8),
+                            (byte) length
+                        }
+                    );
+
+                    outputStream.write(JPEGdata, 0, length);
+
+                    if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
+                        serverStateMonitor.setMode(ServerStateMonitor.MOVIE);
                     }
 
-                    outputStream = null;
+                    previousMode = currentMode;
                 }
-
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    System.err.println("CameraServer: failed to close ServerSocket on port :" + port + ".");
-                }
-                serverSocket = null;
+            } catch (IOException e) {
+                System.out.println("[CameraServer] OutputStream closed. Reconnecting in 1 second.");
+                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
         }
+
     }
 
     public static void main(String[] args) {

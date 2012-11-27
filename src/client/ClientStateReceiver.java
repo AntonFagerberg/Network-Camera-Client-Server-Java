@@ -19,49 +19,24 @@ public class ClientStateReceiver extends Thread {
 
     public void run() {
         Socket socket = null;
-        InputStream inputStream = null;
+        InputStream inputStream;
+        int mode;
 
-        while (true) {
-            try {
-                socket = new Socket(url, port);
-            } catch (IOException e) {
-                System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to create ServerSocket on port :" + port + ". Will retry in 5 seconds.");
-                try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+        try {
+            socket = new Socket(url, port);
+            inputStream = socket.getInputStream();
+
+            while (true) {
+                mode = inputStream.read();
+                if (mode == -1) {
+                    throw new IOException("Stream closed.");
+                }
+                clientStateMonitor.setMode(mode);
+                gui.changeMovieMode(mode, url);
             }
-
-            if (socket != null) {
-                try {
-                    inputStream = socket.getInputStream();
-                } catch (IOException e) {
-                    System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to get InputStream.");
-                }
-
-                if (inputStream != null) {
-                    try {
-                        while (true) {
-                            int mode = inputStream.read();
-                            clientStateMonitor.setMode(mode);
-                            gui.changeMovieMode(mode, url);
-
-                        }
-                    } catch (IOException e) {
-                        System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: InputStream aborted.");
-                    }
-
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to close InputStream.");
-                    }
-                    inputStream = null;
-                }
-
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to close ServerSocket.");
-                }
-            }
+        } catch (IOException e) {
+            System.out.println("[ClientStateReceiver] No connection to client: " + url + " on port: " + port + ". Reconnecting in 1 second.");
+            try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
         }
     }
 }

@@ -201,8 +201,8 @@ public class GUI extends JFrame implements ActionListener {
 		
 		//Starting up client system
 
-		camera1 = "lo-9";
-		camera2 = "lo-9";
+		camera1 = "localhost";
+		camera2 = "localhost";
 		clientStateMonitor = new ClientStateMonitor();
 		httpMonitor = new HTTPMonitor();
 		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,

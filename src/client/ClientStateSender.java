@@ -2,6 +2,7 @@ package client;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 public class ClientStateSender extends Thread {
@@ -15,47 +16,28 @@ public class ClientStateSender extends Thread {
     }
     public void run() {
         ServerSocket serverSocket = null;
-        OutputStream outputStream = null;
+        OutputStream outputStream;
 
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket();
+            serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(port));
         } catch (IOException e) {
-            System.err.println("[" + currentThread().getId() + "] ClientStateSender: failed to create Socket on port: " + port + ". Will retry in 5 seconds.");
-            try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+            System.err.println("[ClientStateSender] Could not start ServerSocket on port: " + port + ".");
+            System.exit(1);
         }
 
-        if (serverSocket != null) {
-
+        while (true) {
             try {
                 outputStream = serverSocket.accept().getOutputStream();
-            } catch (IOException e) {
-                System.err.println("[" + currentThread().getId() + "] ClientStateSender: failed to get OutputStream.");
-            }
-
-            if (outputStream != null) {
-                try {
-                    while (true) {
-                        outputStream.write(clientStateMonitor.getModeBlocking());
-                        System.out.println("Sending...");
-                    }
-                } catch (IOException e) {
-                    System.err.println("[" + currentThread().getId() + "] ClientStateSender: OutputStream aborted.");
+                while (true) {
+                    outputStream.write(clientStateMonitor.getModeBlocking());
+                    System.out.println("sent");
                 }
-
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    System.err.println("[" + currentThread().getId() + "] ClientStateSender: failed to close OutputStream.");
-                }
-                outputStream = null;
-            }
-
-            try {
-                serverSocket.close();
             } catch (IOException e) {
-                System.err.println("[" + currentThread().getId() + "] ClientStateSender: failed to close Socket.");
+                System.out.println("[ClientStateSender] OutputStream closed. Reconnecting in 1 second.");
+                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
-            serverSocket = null;
         }
     }
 }

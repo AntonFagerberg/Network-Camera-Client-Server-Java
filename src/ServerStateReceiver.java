@@ -16,61 +16,32 @@ public class ServerStateReceiver extends Thread {
 
     public void run() {
         Socket socket = null;
-        InputStream inputStream = null;
+        InputStream inputStream;
 
         while (true) {
             try {
                 socket = new Socket(url, port);
+                inputStream = socket.getInputStream();
+
+                while (true) {
+                    switch (inputStream.read()) {
+                        case ServerStateMonitor.IDLE:
+                        case ServerStateMonitor.MOVIE:
+                            serverStateMonitor.unsetForcedMode();
+                            break;
+                        case ServerStateMonitor.IDLE_FORCED:
+                            serverStateMonitor.setMode(ServerStateMonitor.IDLE_FORCED);
+                            break;
+                        case ServerStateMonitor.MOVIE_FORCED:
+                            serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
+                            break;
+                        case -1:
+                            throw new IOException("Stream closed.");
+                    }
+                }
             } catch (IOException e) {
-                System.err.println("ServerStateReceiver: failed to create Socket: " + url + ":" + port + ". Will retry in 5 seconds.");
-                try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
-            }
-
-            if (socket != null) {
-                try {
-                    inputStream = socket.getInputStream();
-                } catch (IOException e) {
-                    System.err.println("ServerStateReceiver: failed to get InputStream.");
-                }
-
-                if (inputStream != null) {
-
-                    try {
-                        while ((mode = inputStream.read()) != -1) {
-                            System.out.println("ServerStateReceiver: waiting for input.");
-                            switch (mode) {
-                                case ServerStateMonitor.IDLE:
-                                case ServerStateMonitor.MOVIE:
-                                    serverStateMonitor.unsetForcedMode();
-                                    break;
-                                case ServerStateMonitor.IDLE_FORCED:
-                                    serverStateMonitor.setMode(ServerStateMonitor.IDLE_FORCED);
-                                    break;
-                                case ServerStateMonitor.MOVIE_FORCED:
-                                    serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
-                                    break;
-                            }
-
-                            System.out.println("ServerStateReceiver: got input.");
-                        }
-                    } catch (IOException e) {
-                        System.err.println("ServerStateReceiver: InputStream aborted.");
-                    }
-
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        System.err.println("ServerStateReceiver: failed to close InputStream.");
-                    }
-                    inputStream = null;
-                }
-
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    System.err.println("ServerStateReceiver: failed to close Socket.");
-                }
-                socket = null;
+                System.out.println("[ServerStateSender] No connection to client: " + url + " on port: " + port + ". Reconnecting in 1 second.");
+                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
         }
     }

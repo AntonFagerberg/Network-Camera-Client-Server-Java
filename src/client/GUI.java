@@ -60,6 +60,7 @@ public class GUI extends JFrame implements ActionListener {
 
 		camera1 = "localhost";
 		camera2 = "localhost";
+
 		clientStateMonitor = new ClientStateMonitor();
 		httpMonitor = new HTTPMonitor();
 		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
@@ -69,9 +70,7 @@ public class GUI extends JFrame implements ActionListener {
 		cameraClient.start();
 		httpServer.start();
 
-		camera1 = "130.235.35.85";
-		camera2 = "130.235.35.85";
-		
+
 
 		
 		

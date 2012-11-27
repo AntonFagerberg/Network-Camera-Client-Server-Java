@@ -22,7 +22,8 @@ public class ServerStateReceiver extends Thread {
             try {
                 socket = new Socket(url, port);
             } catch (IOException e) {
-                System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to create Socket: " + url + ":" + port + ".");
+                System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to create Socket: " + url + ":" + port + ". Will retry in 5 seconds.");
+                try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
 
             if (socket != null) {

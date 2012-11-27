@@ -45,7 +45,8 @@ public class CameraServer extends Thread {
             try {
                 serverSocket = new ServerSocket(port);
             } catch (IOException e) {
-                System.err.println("[" + currentThread().getId() + "] CameraServer: failed to create ServerSocket on port :" + port + ".");
+                System.err.println("[" + currentThread().getId() + "] CameraServer: failed to create ServerSocket on port :" + port + ". Will retry in 5 seconds.");
+                try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
 
             if (serverSocket != null) {

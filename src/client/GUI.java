@@ -55,13 +55,7 @@ public class GUI extends JFrame implements ActionListener {
 	 */
 	public GUI() {
 		
-
-
-		
-
-		
-		
-		//Setting up gui
+		//GUI Initialization
 		setTitle("Video Surveillance");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 861, 593);
@@ -70,7 +64,6 @@ public class GUI extends JFrame implements ActionListener {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		// Initialization
 		borderGrayCam1 = new TitledBorder(new LineBorder(new Color(184, 207,
 				229)), camera1, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
@@ -87,7 +80,7 @@ public class GUI extends JFrame implements ActionListener {
 		image1 = new ImageIcon();
 		image2 = new ImageIcon();
 
-		// Creating panels etc
+		// Starting up GUI ----------------------------------------------------------------------------------------------
 
 		panel1 = new JPanel();
 		panel1.setBorder(borderGrayCam1);
@@ -204,8 +197,9 @@ public class GUI extends JFrame implements ActionListener {
         changeSyncLabel(SYNC_ASYNC);
 		setVisible(true);
 		setResizable(false);
+		//End of GUI setup-----------------------------------------------------------------------------------------------------
 		
-		//Starting up system
+		//Starting up client system
 
 		camera1 = "lo-9";
 		camera2 = "lo-9";

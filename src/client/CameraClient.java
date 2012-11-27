@@ -58,9 +58,9 @@ public class CameraClient extends Thread {
             ((JPEGData.get(i)[27]<0?256+JPEGData.get(i)[27]:JPEGData.get(i)[27])<<8)+(JPEGData.get(i)[28]<0?256+JPEGData.get(i)[28]:JPEGData.get(i)[28]))+
             10L*(JPEGData.get(i)[29]<0?256+JPEGData.get(i)[29]:JPEGData.get(i)[29]);
     }
+    
     public byte[] getJPEG() {
 		return JPEGData.get(0);
-    	
     }
 
     public void run() {

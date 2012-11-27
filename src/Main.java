@@ -7,7 +7,7 @@ public class Main {
 
         (new CameraServer(6600, 6601, "localhost", 6602, camera)).start();
         (new CameraServer(6610, 6611, "localhost", 6612, camera)).start();
-
+///*
         String
             serverURL1 = "localhost",
             serverURL2 = "localhost";
@@ -31,5 +31,6 @@ public class Main {
         )).start();
 
         (new HTTPServer(1337, httpMonitor)).start();
+//*/
 	}
 }

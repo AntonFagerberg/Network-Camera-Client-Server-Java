@@ -17,9 +17,7 @@ public class ServerStateSender extends Thread {
         ServerSocket serverSocket = null;
         OutputStream outputStream;
         try {
-            serverSocket = new ServerSocket();
-            serverSocket.setReuseAddress(true);
-            serverSocket.bind(new InetSocketAddress(port));
+            serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             System.err.println("[ServerStateSender] Could not start ServerSocket on port: " + port + ".");
             System.exit(1);

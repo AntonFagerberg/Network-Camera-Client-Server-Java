@@ -43,9 +43,7 @@ public class CameraServer extends Thread {
         OutputStream outputStream;
 
         try {
-            serverSocket = new ServerSocket();
-            serverSocket.setReuseAddress(true);
-            serverSocket.bind(new InetSocketAddress(port));
+            serverSocket = new ServerSocket(port);
             System.out.println("[CameraServer] Started on port: " + port + ".");
         } catch (IOException e) {
             camera.close();

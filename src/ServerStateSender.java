@@ -7,25 +7,54 @@ public class ServerStateSender extends Thread {
     private int port;
 
     public ServerStateSender(int port, ServerStateMonitor serverStateMonitor) {
-        System.out.println("[" + System.currentTimeMillis() + "] ServerStateSender: started.");
+        System.out.println("[" + currentThread().getId() + "] ServerStateSender: started.");
         this.serverStateMonitor = serverStateMonitor;
         this.port = port;
     }
 
     public void run() {
+        ServerSocket serverSocket = null;
+        OutputStream outputStream = null;
+
         while (true) {
             try {
-                OutputStream outputStream = (new ServerSocket(port)).accept().getOutputStream();
-                while (true) {
-                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateSender: waiting for change.");
-                    outputStream.write(serverStateMonitor.getModeBlocking());
-                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateSender: change sent.");
-                }
+                serverSocket = new ServerSocket(port);
             } catch (IOException e) {
-                System.out.println("[" + System.currentTimeMillis() + "] ServerStateSender: outputStream closed. Reconnecting in 5 seconds.");
+                System.err.println("[" + currentThread().getId() + "] ServerStateSender: failed to create ServerSocket on port: " + port + ".");
+            }
+
+            if (serverSocket != null) {
                 try {
-                    sleep(5000);
-                } catch (InterruptedException e1) { e1.printStackTrace(); }
+                    outputStream = serverSocket.accept().getOutputStream();
+                } catch (IOException e) {
+                    System.err.println("[" + currentThread().getId() + "] ServerStateSender: failed to get OutputStream.");
+                }
+
+                if (outputStream != null) {
+                    try {
+                        while (true) {
+                            System.out.println("[" + currentThread().getId() + "] ServerStateSender: waiting for change.");
+                            outputStream.write(serverStateMonitor.getModeBlocking());
+                            System.out.println("[" + currentThread().getId() + "] ServerStateSender: change sent.");
+                        }
+                    } catch (IOException e) {
+                        System.err.println("[" + currentThread().getId() + "] ServerStateSender: OutputStream aborted.");
+                    }
+
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        System.err.println("[" + currentThread().getId() + "] ServerStateSender: failed to close OutputStream.");
+                    }
+                    outputStream = null;
+                }
+
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    System.err.println("[" + currentThread().getId() + "] ServerStateSender: failed to close ServerSocket.");
+                }
+                serverSocket = null;
             }
         }
     }

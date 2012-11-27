@@ -6,9 +6,9 @@ import se.lth.cs.fakecamera.Axis211A;
 public class Main {
 	public static void main(String[] args) {
         Axis211A camera = new Axis211A();
-        (new CameraServer(6077, 6078, "localhost", 6079, camera)).start();
-        (new CameraServer(6080, 6081, "localhost", 6082, camera)).start();
-
+        (new CameraServer(6077, 6078, "130.235.35.187", 6079, camera)).start();
+        (new CameraServer(6080, 6081, "130.235.35.187", 6082, camera)).start();
+//        new GUI();
 //        CameraClient cameraClient = new CameraClient(
 //                "130.235.34.186", 6600, 6602, 6601,
 //                "130.235.34.191", 6610, 6612, 6611

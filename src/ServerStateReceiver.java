@@ -11,34 +11,64 @@ public class ServerStateReceiver extends Thread {
         this.serverStateMonitor = serverStateMonitor;
         this.port = port;
         this.url = url;
-        System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: started.");
+        System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: started.");
     }
 
     public void run() {
+        Socket socket = null;
+        InputStream inputStream = null;
+
         while (true) {
             try {
-                InputStream inputStream = (new Socket(url, port)).getInputStream();
-                while ((mode = inputStream.read()) != -1) {
-//                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: waiting for input.");
-                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: got mode: " + mode);
-                    switch (mode) {
-                        case ServerStateMonitor.IDLE:
-                        case ServerStateMonitor.MOVIE:
-                            serverStateMonitor.unsetForcedMode();
-                            break;
-                        case ServerStateMonitor.IDLE_FORCED:
-                            serverStateMonitor.setMode(ServerStateMonitor.IDLE_FORCED);
-                            break;
-                        case ServerStateMonitor.MOVIE_FORCED:
-                            serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
-                            break;
-                    }
-                }
+                socket = new Socket(url, port);
             } catch (IOException e) {
-                System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: connection failed, sleeping 5 seconds...");
+                System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to create Socket: " + url + ":" + port + ".");
+            }
+
+            if (socket != null) {
                 try {
-                    sleep(5000);
-                } catch (InterruptedException e1) { e1.printStackTrace(); }
+                    inputStream = socket.getInputStream();
+                } catch (IOException e) {
+                    System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to get InputStream.");
+                }
+
+                if (inputStream != null) {
+
+                    try {
+                        while (true) {
+                            System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: waiting for input.");
+                            switch (inputStream.read()) {
+                                case ServerStateMonitor.IDLE:
+                                case ServerStateMonitor.MOVIE:
+                                    serverStateMonitor.unsetForcedMode();
+                                    break;
+                                case ServerStateMonitor.IDLE_FORCED:
+                                    serverStateMonitor.setMode(ServerStateMonitor.IDLE_FORCED);
+                                    break;
+                                case ServerStateMonitor.MOVIE_FORCED:
+                                    serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
+                                    break;
+                            }
+                            System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: got input.");
+                        }
+                    } catch (IOException e) {
+                        System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: InputStream aborted.");
+                    }
+
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to close InputStream.");
+                    }
+                    inputStream = null;
+                }
+
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to close Socket.");
+                }
+                socket = null;
             }
         }
     }

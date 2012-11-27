@@ -5,7 +5,7 @@ import java.net.Socket;
 public class ServerStateReceiver extends Thread {
     ServerStateMonitor serverStateMonitor;
     String url;
-    int port;
+    int port, mode;
 
     public ServerStateReceiver(String url, int port, ServerStateMonitor serverStateMonitor) {
         this.serverStateMonitor = serverStateMonitor;
@@ -18,9 +18,8 @@ public class ServerStateReceiver extends Thread {
         while (true) {
             try {
                 InputStream inputStream = (new Socket(url, port)).getInputStream();
-                while (true) {
-                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: waiting for input.");
-                    int mode = inputStream.read();
+                while ((mode = inputStream.read()) != -1) {
+//                    System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: waiting for input.");
                     System.out.println("[" + System.currentTimeMillis() + "] ServerStateReceiver: got mode: " + mode);
                     switch (mode) {
                         case ServerStateMonitor.IDLE:

@@ -13,12 +13,15 @@ public class CameraClient extends Thread {
     private byte[] JPEGDataSize = new byte[4];
     private long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
- 
     private HTTPMonitor httpMonitor;
+    public volatile boolean alive;
+    private ClientStateSender css1,css2;
+    private ClientStateReceiver csr1,csr2;
+    private ClientStateMonitor clientStateMonitor;
 
-	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor,HTTPMonitor httpMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2, int httpPort) {
-        
+	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, HTTPMonitor httpMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
 		this.gui = gui;
+		this.clientStateMonitor = clientStateMonitor;
 		this.httpMonitor = httpMonitor;
         
 		try {
@@ -27,14 +30,18 @@ public class CameraClient extends Thread {
                 (new Socket(serverAddress2, serverPicturePort2)).getInputStream()
             };
 
-            (new ClientStateSender(serverReceivePort1, clientStateMonitor)).start();
-            (new ClientStateSender(serverReceivePort2, clientStateMonitor)).start();
-            (new ClientStateReceiver(serverAddress1, serverSendPort1, clientStateMonitor,gui)).start();
-            (new ClientStateReceiver(serverAddress2, serverSendPort2, clientStateMonitor,gui)).start();
+            css1 = new ClientStateSender(serverReceivePort1, clientStateMonitor);
+            css1.start();
+            css2 = new ClientStateSender(serverReceivePort2, clientStateMonitor);
+            css2.start();
+            csr1 = new ClientStateReceiver(serverAddress1, serverSendPort1, clientStateMonitor,gui);
+            csr1.start();
+            csr2 = new ClientStateReceiver(serverAddress2, serverSendPort2, clientStateMonitor,gui);
+            csr2.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+		alive = true;
 
     }
 
@@ -62,13 +69,13 @@ public class CameraClient extends Thread {
             ((JPEGData.get(i)[27]<0?256+JPEGData.get(i)[27]:JPEGData.get(i)[27])<<8)+(JPEGData.get(i)[28]<0?256+JPEGData.get(i)[28]:JPEGData.get(i)[28]))+
             10L*(JPEGData.get(i)[29]<0?256+JPEGData.get(i)[29]:JPEGData.get(i)[29]);
     }
-    
+
     
 
     public void run() {
         int synchronizedMode;
 
-        while (true) {
+        while (alive) {
             for (int i = 0; i < 2; i++) {
                 while (timeStamps[i] < 0 || Math.abs(System.currentTimeMillis() - timeStamps[i]) > 5000000) {
                     fillData(i);
@@ -103,5 +110,9 @@ public class CameraClient extends Thread {
             	httpMonitor.storeImage(JPEGData.get(0));
             }
         }
+//        css1.alive = false;
+//        css2.alive = false;
+//        csr1.alive = false;
+//        csr2.alive = false;
     }
 }

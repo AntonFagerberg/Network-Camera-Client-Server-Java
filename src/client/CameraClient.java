@@ -9,7 +9,10 @@ import java.util.ArrayList;
 public class CameraClient extends Thread {
     private GUI gui;
 	private InputStream[] inputStreams;
-    private ArrayList<byte[]> JPEGData = new ArrayList<byte[]>(2);
+    private ArrayList<byte[]> JPEGData = new ArrayList<byte[]>(2){{
+        add(new byte[0]);
+        add(new byte[0]);
+    }};
     private byte[] JPEGDataSize = new byte[4];
     private long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
@@ -36,18 +39,29 @@ public class CameraClient extends Thread {
     }
 
     private void fillData(int i) throws IOException {
-        int bytesLeft, bytesExpected;
+        int bytesLeft, bytesExpected, length;
 
         bytesExpected = bytesLeft = 4;
         while (bytesLeft > 0) {
-            bytesLeft -= inputStreams[i].read(JPEGDataSize, bytesExpected - bytesLeft, bytesLeft);
+            length = inputStreams[i].read(JPEGDataSize, bytesExpected - bytesLeft, bytesLeft);
+            if (length == -1) {
+                throw new IOException("Stream ended.");
+            } else {
+                bytesLeft -= length;
+            }
         }
 
         bytesLeft = bytesExpected = ByteBuffer.wrap(JPEGDataSize).getInt();
-        JPEGData.add(i, new byte[bytesExpected]);
+        JPEGData.set(i, new byte[bytesExpected]);
 
         while (bytesLeft > 0) {
-            bytesLeft -= inputStreams[i].read(JPEGData.get(i), bytesExpected - bytesLeft, bytesLeft);
+            length = inputStreams[i].read(JPEGData.get(i), bytesExpected - bytesLeft, bytesLeft);
+
+            if (length == -1) {
+                throw new IOException("Stream ended.");
+            } else {
+                bytesLeft -= length;
+            }
         }
 
         timeStamps[i] =
@@ -59,48 +73,50 @@ public class CameraClient extends Thread {
     public void run() {
         int synchronizedMode;
 
-        try {
-            inputStreams = new InputStream[]{
-                (new Socket(serverAddress1, serverPicturePort1)).getInputStream(),
-                (new Socket(serverAddress2, serverPicturePort2)).getInputStream()
-            };
+        while (true) {
+            try {
+                inputStreams = new InputStream[]{
+                    (new Socket(serverAddress1, serverPicturePort1)).getInputStream(),
+                    (new Socket(serverAddress2, serverPicturePort2)).getInputStream()
+                };
 
-            while (true) {
-                for (int i = 0; i < 2; i++) {
-                    while (timeStamps[i] < 0 || Math.abs(System.currentTimeMillis() - timeStamps[i]) > 5000000) {
-                        fillData(i);
+                while (true) {
+                    for (int i = 0; i < 2; i++) {
+                        while (timeStamps[i] < 0 || Math.abs(System.currentTimeMillis() - timeStamps[i]) > 5000000) {
+                            fillData(i);
+                        }
                     }
+
+                    synchronizedMode = gui.getSyncFromGui();
+
+                    if (synchronizedMode == GUI.SYNC_AUTO) {
+                        if (Math.abs(timeStamps[0] - timeStamps[1]) > SYNC_DELAY) gui.changeSyncLabel(GUI.SYNC_ASYNC);
+                        else gui.changeSyncLabel(GUI.SYNC_SYNC);
+                    }
+
+                    if (synchronizedMode != GUI.SYNC_ASYNC && timeStamps[0] > timeStamps[1]) {
+                        gui.refreshCameraImage(JPEGData.get(1), 2);
+                        gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
+                        timeStamps[1] = -1;
+                    } else if (synchronizedMode != GUI.SYNC_ASYNC && timeStamps[0] < timeStamps[1]) {
+                        gui.refreshCameraImage(JPEGData.get(0), 1);
+                        gui.printDelay(System.currentTimeMillis() - timeStamps[0], 1);
+                        timeStamps[0] = -1;
+                    } else {
+                        gui.refreshCameraImage(JPEGData.get(0), 1);
+                        gui.refreshCameraImage(JPEGData.get(1), 2);
+                        gui.printDelay(System.currentTimeMillis() - timeStamps[0], 1);
+                        gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
+                        timeStamps[0] = -1;
+                        timeStamps[1] = -1;
+                    }
+
+                    httpMonitor.storeImage(JPEGData.get(0));
                 }
-
-                synchronizedMode = gui.getSyncFromGui();
-
-                if (synchronizedMode == GUI.SYNC_AUTO) {
-                    if (Math.abs(timeStamps[0] - timeStamps[1]) > SYNC_DELAY) gui.changeSyncLabel(GUI.SYNC_ASYNC);
-                    else gui.changeSyncLabel(GUI.SYNC_SYNC);
-                }
-
-                if (synchronizedMode != GUI.SYNC_ASYNC && timeStamps[0] > timeStamps[1]) {
-                    gui.refreshCameraImage(JPEGData.get(1), 2);
-                    gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
-                    timeStamps[1] = -1;
-                } else if (synchronizedMode != GUI.SYNC_ASYNC && timeStamps[0] < timeStamps[1]) {
-                    gui.refreshCameraImage(JPEGData.get(0), 1);
-                    gui.printDelay(System.currentTimeMillis() - timeStamps[0], 1);
-                    timeStamps[0] = -1;
-                } else {
-                    gui.refreshCameraImage(JPEGData.get(0), 1);
-                    gui.refreshCameraImage(JPEGData.get(1), 2);
-                    gui.printDelay(System.currentTimeMillis() - timeStamps[0], 1);
-                    gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
-                    timeStamps[0] = -1;
-                    timeStamps[1] = -1;
-                }
-
-                httpMonitor.storeImage(JPEGData.get(0));
+            } catch (IOException e) {
+                System.out.println("[CameraClient] No connection to server: " + serverAddress1 + " on port: " + serverPicturePort1 + " or " + serverAddress2 + " on port: " + serverPicturePort2 + ". Reconnecting in 1 second.");
+                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
-        } catch (IOException e) {
-            System.out.println("[CameraClient] No connection to server: " + serverAddress1 + " on port: " + serverPicturePort1 + " or " + serverAddress2 + " on port: " + serverPicturePort2 + ". Reconnecting in 1 second.");
-            try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
         }
     }
 }

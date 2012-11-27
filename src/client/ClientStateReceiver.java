@@ -21,20 +21,22 @@ public class ClientStateReceiver extends Thread {
         InputStream inputStream;
         int mode;
 
-        try {
-            inputStream = (new Socket(url, port)).getInputStream();
+        while (true) {
+            try {
+                inputStream = (new Socket(url, port)).getInputStream();
 
-            while (true) {
-                mode = inputStream.read();
-                if (mode == -1) {
-                    throw new IOException("Stream closed.");
+                while (true) {
+                    mode = inputStream.read();
+                    if (mode == -1) {
+                        throw new IOException("Stream closed.");
+                    }
+                    clientStateMonitor.setMode(mode);
+                    gui.changeMovieMode(url);
                 }
-                clientStateMonitor.setMode(mode);
-                gui.changeMovieMode(url);
+            } catch (IOException e) {
+                System.out.println("[ClientStateReceiver] No connection to server: " + url + " on port: " + port + ". Reconnecting in 1 second.");
+                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
-        } catch (IOException e) {
-            System.out.println("[ClientStateReceiver] No connection to server: " + url + " on port: " + port + ". Reconnecting in 1 second.");
-            try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
         }
     }
 }

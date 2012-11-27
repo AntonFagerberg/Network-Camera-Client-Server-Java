@@ -74,7 +74,6 @@ public class CameraServer extends Thread {
                             (byte) length
                         }
                     );
-
                     outputStream.write(JPEGdata, 0, length);
 
                     if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {

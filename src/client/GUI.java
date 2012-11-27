@@ -18,32 +18,55 @@ public class GUI extends JFrame implements ActionListener {
         SYNC_ASYNC = 0,
 		IDLE = 0,
 		MOVIE = 1;
-	private JPanel contentPane;
-	private ImageIcon image1;
-	private ImageIcon image2;
-	private JLabel lbImage1;
-	private JLabel lbImage2;
-	private JPanel panel1;
-	private JPanel panel2;
-	private TitledBorder borderGrayCam1;
-	private TitledBorder borderRedCam1;
-	private TitledBorder borderGrayCam2;
-	private TitledBorder borderRedCam2;
-	private JPanel panelActive;
-	private JLabel lbActive;
-	private JLabel delayCamera1;
-	private JLabel delayCamera2;
-	private JRadioButton rbIdle, rbAuto, rbMovie, rbMovieAuto, rbSync, rbAsync;
+	private JPanel contentPane,
+					panel1,
+					panel2,
+					panelActive;
+	private ImageIcon image1,
+					image2;
+	private JLabel lbImage1,
+					lbImage2,
+					lbActive,
+					delayCamera1,
+					delayCamera2,
+					lblCurrentSyncMode;
+	private TitledBorder borderGrayCam1,
+	 						borderRedCam1,
+	 						borderGrayCam2,
+	 						borderRedCam2;
+	private JRadioButton rbIdle, 
+						rbAuto, 
+						rbMovie, 
+						rbMovieAuto, 
+						rbSync, 
+						rbAsync;
 	private ClientStateMonitor clientStateMonitor;
-	private JLabel lblCurrentSyncMode;
+	private CameraClient cameraClient;
+	private String camera1, camera2;
+	private HTTPMonitor httpMonitor;
+	private HTTPServer httpServer;
+
 
 
 	/**
 	 * Create the frame.
 	 */
-	public GUI(ClientStateMonitor clientStateMonitor, String camera1, String camera2) {
+	public GUI() {
+		//Starting up system
+		camera1 = "localhost";
+		camera2 = "localhost";
+		clientStateMonitor = new ClientStateMonitor();
+		httpMonitor = new HTTPMonitor();
+		cameraClient = new CameraClient(this,clientStateMonitor,httpMonitor,
+             camera1, 6077, 6079, 6078,
+             camera2, 6080, 6082, 6081,
+             1337);
+		httpServer = new HTTPServer(1337, httpMonitor);
+		cameraClient.start();
+		httpServer.start();
 		
-		this.clientStateMonitor = clientStateMonitor;
+		
+		//Setting up gui
 		setTitle("Video Surveillance");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 861, 593);
@@ -182,7 +205,8 @@ public class GUI extends JFrame implements ActionListener {
 				lblCurrentSyncMode = new JLabel("Current sync mode: ");
 				lblCurrentSyncMode.setBounds(448, 408, 328, 15);
 				contentPane.add(lblCurrentSyncMode);
-
+				
+				
 		panelActive.setVisible(false);
 
         changeSyncLabel(SYNC_ASYNC);

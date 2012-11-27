@@ -13,11 +13,15 @@ public class CameraClient extends Thread {
     private byte[] JPEGDataSize = new byte[4];
     private long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
+ 
+    private HTTPMonitor httpMonitor;
 
-	public CameraClient(String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
-        ClientStateMonitor clientStateMonitor = new ClientStateMonitor();
-        gui = new GUI(clientStateMonitor, serverAddress1, serverAddress2);
-        try {
+	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor,HTTPMonitor httpMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2, int httpPort) {
+        
+		this.gui = gui;
+		this.httpMonitor = httpMonitor;
+        
+		try {
             inputStreams = new InputStream[]{
                 (new Socket(serverAddress1, serverPicturePort1)).getInputStream(),
                 (new Socket(serverAddress2, serverPicturePort2)).getInputStream()
@@ -59,9 +63,7 @@ public class CameraClient extends Thread {
             10L*(JPEGData.get(i)[29]<0?256+JPEGData.get(i)[29]:JPEGData.get(i)[29]);
     }
     
-    public byte[] getJPEG() {
-		return JPEGData.get(0);
-    }
+    
 
     public void run() {
         int synchronizedMode;
@@ -95,6 +97,10 @@ public class CameraClient extends Thread {
                 gui.printDelay(System.currentTimeMillis() - timeStamps[1], 2);
                 timeStamps[0] = -1;
                 timeStamps[1] = -1;
+            }
+            
+            if(httpMonitor.checkState()){
+            	httpMonitor.storeImage(JPEGData.get(0));
             }
         }
     }

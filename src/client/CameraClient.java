@@ -14,10 +14,11 @@ public class CameraClient extends Thread {
     private long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
 
-	public CameraClient(String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
-        ClientStateMonitor clientStateMonitor = new ClientStateMonitor();
-        gui = new GUI(clientStateMonitor, serverAddress1, serverAddress2);
-        try {
+	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
+        
+		this.gui = gui;
+        
+		try {
             inputStreams = new InputStream[]{
                 (new Socket(serverAddress1, serverPicturePort1)).getInputStream(),
                 (new Socket(serverAddress2, serverPicturePort2)).getInputStream()

@@ -11,7 +11,7 @@ public class ServerStateReceiver extends Thread {
         this.serverStateMonitor = serverStateMonitor;
         this.port = port;
         this.url = url;
-        System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: started.");
+        System.out.println("ServerStateReceiver: started.");
     }
 
     public void run() {
@@ -22,7 +22,7 @@ public class ServerStateReceiver extends Thread {
             try {
                 socket = new Socket(url, port);
             } catch (IOException e) {
-                System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to create Socket: " + url + ":" + port + ". Will retry in 5 seconds.");
+                System.err.println("ServerStateReceiver: failed to create Socket: " + url + ":" + port + ". Will retry in 5 seconds.");
                 try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
 
@@ -30,14 +30,14 @@ public class ServerStateReceiver extends Thread {
                 try {
                     inputStream = socket.getInputStream();
                 } catch (IOException e) {
-                    System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to get InputStream.");
+                    System.err.println("ServerStateReceiver: failed to get InputStream.");
                 }
 
                 if (inputStream != null) {
 
                     try {
                         while ((mode = inputStream.read()) != -1) {
-                            System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: waiting for input.");
+                            System.out.println("ServerStateReceiver: waiting for input.");
                             switch (mode) {
                                 case ServerStateMonitor.IDLE:
                                 case ServerStateMonitor.MOVIE:
@@ -51,16 +51,16 @@ public class ServerStateReceiver extends Thread {
                                     break;
                             }
 
-                            System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: got input.");
+                            System.out.println("ServerStateReceiver: got input.");
                         }
                     } catch (IOException e) {
-                        System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: InputStream aborted.");
+                        System.err.println("ServerStateReceiver: InputStream aborted.");
                     }
 
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to close InputStream.");
+                        System.err.println("ServerStateReceiver: failed to close InputStream.");
                     }
                     inputStream = null;
                 }
@@ -68,7 +68,7 @@ public class ServerStateReceiver extends Thread {
                 try {
                     socket.close();
                 } catch (IOException e) {
-                    System.err.println("[" + currentThread().getId() + "] ServerStateReceiver: failed to close Socket.");
+                    System.err.println("ServerStateReceiver: failed to close Socket.");
                 }
                 socket = null;
             }

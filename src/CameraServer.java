@@ -59,10 +59,10 @@ public class CameraServer extends Thread {
                 if (outputStream != null) {
                     try {
                         while (true) {
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: waiting for picture.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: waiting for picture.");
                             currentMode = serverStateMonitor.getMode();
                             if (currentMode == ServerStateMonitor.IDLE || currentMode == ServerStateMonitor.IDLE_FORCED) {
-                                System.out.println("[" + currentThread().getId() + "] CameraServer: idle, waiting.");
+//                                System.out.println("[" + currentThread().getId() + "] CameraServer: idle, waiting.");
                                 waitTime = System.currentTimeMillis() + WAIT_TIME;
                                 while ((currentMode == ServerStateMonitor.IDLE_FORCED && waitTime > System.currentTimeMillis()) || (currentMode == ServerStateMonitor.IDLE && waitTime > System.currentTimeMillis() && !motionDetector.detect())) {
                                     try {
@@ -74,10 +74,9 @@ public class CameraServer extends Thread {
                                 }
                             }
 
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: calling camera.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: calling camera.");
                             length = camera.getJPEG(JPEGdata, 0);
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: got picture with length: " + length);
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: sending picture length.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: got picture with length: " + length);
                             outputStream.write(
                                     new byte[] {
                                             (byte) (length >>> 24),
@@ -86,15 +85,15 @@ public class CameraServer extends Thread {
                                             (byte) length
                                     }
                             );
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: sending picture data.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: sending picture data.");
                             outputStream.write(JPEGdata, 0, length);
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: picture sent.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: picture sent.");
 
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: looking for motion: starting.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: looking for motion: starting.");
                             if (previousMode == ServerStateMonitor.IDLE && currentMode == ServerStateMonitor.IDLE && motionDetector.detect()) {
                                 serverStateMonitor.setMode(ServerStateMonitor.MOVIE);
                             }
-                            System.out.println("[" + currentThread().getId() + "] CameraServer: looking for motion: done.");
+//                            System.out.println("[" + currentThread().getId() + "] CameraServer: looking for motion: done.");
 
                             previousMode = currentMode;
                         }

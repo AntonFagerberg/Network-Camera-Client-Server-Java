@@ -9,10 +9,8 @@ public class ClientStateReceiver extends Thread {
     private String url;
     private int port;
     private GUI gui;
-    public volatile boolean alive;
 
     public ClientStateReceiver(String url, int port, ClientStateMonitor clientStateMonitor, GUI gui) {
-    	alive = true;
         this.url = url;
         this.port = port;
         this.clientStateMonitor = clientStateMonitor;
@@ -20,20 +18,49 @@ public class ClientStateReceiver extends Thread {
     }
 
     public void run() {
-        while (alive) {
+        Socket socket = null;
+        InputStream inputStream = null;
+
+        while (true) {
             try {
-                InputStream inputStream = (new Socket(url, port)).getInputStream();
-                while (true) {
-                	int mode = inputStream.read();
-                    clientStateMonitor.setMode(mode);
-                    gui.changeMovieMode(mode,url);
-                    
-                }
+                socket = new Socket(url, port);
             } catch (IOException e) {
-                System.out.println("[ClientStateReceiver] Connection failed: Sleeping 5 seconds...");
+                System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to create ServerSocket on port :" + port + ". Will retry in 5 seconds.");
+                try { sleep(5000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+            }
+
+            if (socket != null) {
                 try {
-                    sleep(5000);
-                } catch (InterruptedException e1) { e1.printStackTrace(); }
+                    inputStream = socket.getInputStream();
+                } catch (IOException e) {
+                    System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to get InputStream.");
+                }
+
+                if (inputStream != null) {
+                    try {
+                        while (true) {
+                            int mode = inputStream.read();
+                            clientStateMonitor.setMode(mode);
+                            gui.changeMovieMode(mode, url);
+
+                        }
+                    } catch (IOException e) {
+                        System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: InputStream aborted.");
+                    }
+
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to close InputStream.");
+                    }
+                    inputStream = null;
+                }
+
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    System.err.println("[" + currentThread().getId() + "] ClientStateReceiver: failed to close ServerSocket.");
+                }
             }
         }
     }

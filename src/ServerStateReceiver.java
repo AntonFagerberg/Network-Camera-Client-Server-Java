@@ -36,9 +36,9 @@ public class ServerStateReceiver extends Thread {
                 if (inputStream != null) {
 
                     try {
-                        while (true) {
+                        while ((mode = inputStream.read()) != -1) {
                             System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: waiting for input.");
-                            switch (inputStream.read()) {
+                            switch (mode) {
                                 case ServerStateMonitor.IDLE:
                                 case ServerStateMonitor.MOVIE:
                                     serverStateMonitor.unsetForcedMode();
@@ -50,6 +50,7 @@ public class ServerStateReceiver extends Thread {
                                     serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
                                     break;
                             }
+
                             System.out.println("[" + currentThread().getId() + "] ServerStateReceiver: got input.");
                         }
                     } catch (IOException e) {

@@ -60,7 +60,6 @@ public class GUI extends JFrame implements ActionListener {
 
 		camera1 = "localhost";
 		camera2 = "localhost";
-
 		clientStateMonitor = new ClientStateMonitor();
 		httpMonitor = new HTTPMonitor();
 		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
@@ -70,7 +69,7 @@ public class GUI extends JFrame implements ActionListener {
 		cameraClient.start();
 		httpServer.start();
 
-
+		
 
 		
 		
@@ -253,11 +252,13 @@ public class GUI extends JFrame implements ActionListener {
 	public void setModeInMonitor() {
 		if (rbMovie.isSelected()) {
             clientStateMonitor.setMode(ClientStateMonitor.MOVIE_FORCED);
+            changeMovieMode(MOVIE, "User");
 		} else if (rbIdle.isSelected()) {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
+            changeMovieMode(IDLE, "");
 		} else {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE);
-            changeMovieMode(IDLE, "IDLE");
+            changeMovieMode(IDLE, "");
 		}
 	}
 
@@ -284,6 +285,7 @@ public class GUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String str = e.getActionCommand();
 		if(str.equals("radiobutton")){
+			System.out.println("tjohaej");
 			setModeInMonitor();
 		}else if(str.equals("connect")){
 			clientStateMonitor = new ClientStateMonitor();

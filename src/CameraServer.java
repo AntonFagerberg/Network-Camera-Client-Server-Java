@@ -21,17 +21,18 @@ public class CameraServer extends Thread {
     private int port;
 
     public CameraServer(int picturePort, int stateSendPort, String stateReceiveAddress, int stateReceivePort) {
+        (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();
+        (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
         this.port = picturePort;
         camera = new Axis211A();
-        (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
-        (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();
+        camera.connect();
     }
 
     public CameraServer(int port, int stateSendPort, String stateReceiveAddress, int stateReceivePort, Axis211A camera) {
+        (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();
+        (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
         this.camera = camera;
         this.port = port;
-        (new ServerStateSender(stateSendPort, serverStateMonitor)).start();
-        (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();
     }
 
     public void run() {
@@ -47,6 +48,7 @@ public class CameraServer extends Thread {
             serverSocket.bind(new InetSocketAddress(port));
             System.out.println("[CameraServer] Started on port: " + port + ".");
         } catch (IOException e) {
+            camera.close();
             System.err.println("[CameraServer] Could not start ServerSocket on port: " + port + ".");
             System.exit(1);
         }
@@ -84,11 +86,9 @@ public class CameraServer extends Thread {
                     previousMode = currentMode;
                 }
             } catch (IOException e) {
-                System.out.println("[CameraServer] OutputStream closed. Reconnecting in 1 second.");
-                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+                System.out.println("[CameraServer] OutputStream closed. Reconnecting.");
             }
         }
-
     }
 
     public static void main(String[] args) {

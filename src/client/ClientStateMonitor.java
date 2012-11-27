@@ -11,7 +11,9 @@ public class ClientStateMonitor {
     public synchronized int getModeBlocking() {
         try {
             wait();
-        } catch (InterruptedException e) { e.printStackTrace(); }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return mode;
     }
@@ -29,6 +31,7 @@ public class ClientStateMonitor {
     	} else if (mode == MOVIE_FORCED){
     		mode = MOVIE;
     	}
+
     	notifyAll();
     }
 }

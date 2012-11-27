@@ -32,11 +32,9 @@ public class ClientStateSender extends Thread {
                 outputStream = serverSocket.accept().getOutputStream();
                 while (true) {
                     outputStream.write(clientStateMonitor.getModeBlocking());
-                    System.out.println("sent");
                 }
             } catch (IOException e) {
-                System.out.println("[ClientStateSender] OutputStream closed. Reconnecting in 1 second.");
-                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+                System.out.println("[ClientStateSender] OutputStream closed. Reconnecting.");
             }
         }
     }

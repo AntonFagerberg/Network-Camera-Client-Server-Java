@@ -1,7 +1,5 @@
 package client;
 
-import client.ClientStateMonitor;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -11,13 +9,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUI extends JFrame implements ActionListener {
-
+    private String serverURL1, serverURL2;
+    private ClientStateMonitor clientStateMonitor;
 	public final static int
         SYNC_AUTO = -1,
         SYNC_SYNC = 1,
         SYNC_ASYNC = 0,
 		IDLE = 0,
 		MOVIE = 1;
+
+
 	private JPanel 		contentPane,
 						panel1,
 						panel2,
@@ -40,21 +41,16 @@ public class GUI extends JFrame implements ActionListener {
 						rbMovieAuto, 
 						rbSync, 
 						rbAsync;
-	private ClientStateMonitor clientStateMonitor;
-	private CameraClient cameraClient;
-	private String camera1, camera2;
-	private HTTPMonitor httpMonitor;
-	private HTTPServer httpServer;
-
-
-
 
 
 	/**
 	 * Create the frame.
 	 */
-	public GUI() {
-		
+	public GUI(String serverURL1, String serverURL2, ClientStateMonitor clientStateMonitor) {
+		this.serverURL1 = serverURL1;
+        this.serverURL2 = serverURL2;
+        this.clientStateMonitor = clientStateMonitor;
+
 		//GUI Initialization
 		setTitle("Video Surveillance");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,16 +61,16 @@ public class GUI extends JFrame implements ActionListener {
 		contentPane.setLayout(null);
 
 		borderGrayCam1 = new TitledBorder(new LineBorder(new Color(184, 207,
-				229)), camera1, TitledBorder.LEADING, TitledBorder.TOP, null,
+				229)), serverURL1, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 		borderRedCam1 = new TitledBorder(new LineBorder(new Color(255, 0, 0)),
-				camera1, TitledBorder.LEADING, TitledBorder.TOP, null,
+                serverURL1, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 		borderGrayCam2 = new TitledBorder(new LineBorder(new Color(184, 207,
-				229)), camera2, TitledBorder.LEADING, TitledBorder.TOP, null,
+				229)), serverURL2, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 		borderRedCam2 = new TitledBorder(new LineBorder(new Color(255, 0, 0)),
-				camera2, TitledBorder.LEADING, TitledBorder.TOP, null,
+                serverURL2, TitledBorder.LEADING, TitledBorder.TOP, null,
 				new Color(51, 51, 51));
 
 		image1 = new ImageIcon();
@@ -201,37 +197,16 @@ public class GUI extends JFrame implements ActionListener {
 		
 		//Starting up client system
 
-		camera1 = "localhost";
-		camera2 = "localhost";
-		clientStateMonitor = new ClientStateMonitor();
-		httpMonitor = new HTTPMonitor();
-		cameraClient = new CameraClient(this, clientStateMonitor, httpMonitor,
-			 camera1, 6610, 6612, 6611,
-             camera2, 6600, 6602, 6601);
-		httpServer = new HTTPServer(1337, httpMonitor);
-		cameraClient.start();
-		httpServer.start();
+
 	}
 
-	public void refreshCameraImage(byte[] jpeg, int cameraIndex) {
+	public void refreshCameraImage(byte[] JPEGData, int cameraIndex) {
 		if (cameraIndex == 1) {
-			image1.setImage(getToolkit().createImage(jpeg));
+			image1.setImage(getToolkit().createImage(JPEGData));
 			image1.paintIcon(this, lbImage1.getGraphics(), 0, 0);
 		} else if (cameraIndex == 2) {
-			image2.setImage(getToolkit().createImage(jpeg));
+			image2.setImage(getToolkit().createImage(JPEGData));
 			image2.paintIcon(this, lbImage2.getGraphics(), 0, 0);
-		}
-	}
-
-	public void setModeInMonitor() {
-		if (rbMovie.isSelected()) {
-            clientStateMonitor.setMode(ClientStateMonitor.MOVIE_FORCED);
-            changeMovieMode(MOVIE, "User");
-		} else if (rbIdle.isSelected()) {
-            clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
-            changeMovieMode(IDLE, "");
-		} else {
-			clientStateMonitor.unsetForced();
 		}
 	}
 
@@ -248,16 +223,26 @@ public class GUI extends JFrame implements ActionListener {
 	}
 
 	public void printDelay(long delay, int cameraIndex) {
-		if (cameraIndex == 1) {
-			delayCamera1.setText("Delay: " + delay + " ms");
-		} else if (cameraIndex == 2) {
-			delayCamera2.setText("Delay: " + delay + " ms");
-		}
+        switch (cameraIndex) {
+            case 1:
+                delayCamera1.setText("Delay: " + delay + " ms");
+                break;
+            case 2:
+                delayCamera2.setText("Delay: " + delay + " ms");
+                break;
+        }
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-			setModeInMonitor();
-			System.out.println("radiobutton pushed!");
+        if (rbMovie.isSelected()) {
+            clientStateMonitor.setMode(ClientStateMonitor.MOVIE_FORCED);
+            changeMovieMode("client");
+        } else if (rbIdle.isSelected()) {
+            clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
+            changeMovieMode("");
+        } else {
+            clientStateMonitor.unsetForced();
+        }
 	}
 	
 	public void changeSyncLabel(int mode) {
@@ -270,19 +255,16 @@ public class GUI extends JFrame implements ActionListener {
                 break;
 		}
 	}
-	public void changeMovieMode(int mode, String url){
-		switch(mode){
-			case MOVIE:
-				panel1.setBorder(borderRedCam1);
-				panel2.setBorder(borderRedCam2);
-				lbActive.setText("Movie mode triggered by " + url);
-				panelActive.setVisible(true);
-				break;
-			case IDLE:
-				panel1.setBorder(borderGrayCam1);
-				panel2.setBorder(borderGrayCam2);				
-				panelActive.setVisible(false);
-				break;
+	public void changeMovieMode(String caller){
+		if (caller != "") {
+            panel1.setBorder(borderRedCam1);
+            panel2.setBorder(borderRedCam2);
+            lbActive.setText("Movie mode triggered by " + caller + ".");
+            panelActive.setVisible(true);
+        } else {
+            panel1.setBorder(borderGrayCam1);
+            panel2.setBorder(borderGrayCam2);
+            panelActive.setVisible(false);
 		}
 	}
 }

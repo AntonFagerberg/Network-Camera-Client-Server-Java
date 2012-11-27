@@ -5,17 +5,16 @@ import java.net.Socket;
 public class ServerStateReceiver extends Thread {
     ServerStateMonitor serverStateMonitor;
     String url;
-    int port, mode;
+    int port;
 
     public ServerStateReceiver(String url, int port, ServerStateMonitor serverStateMonitor) {
         this.serverStateMonitor = serverStateMonitor;
         this.port = port;
         this.url = url;
-        System.out.println("ServerStateReceiver: started.");
     }
 
     public void run() {
-        Socket socket = null;
+        Socket socket;
         InputStream inputStream;
 
         while (true) {
@@ -40,7 +39,7 @@ public class ServerStateReceiver extends Thread {
                     }
                 }
             } catch (IOException e) {
-                System.out.println("[ServerStateSender] No connection to client: " + url + " on port: " + port + ". Reconnecting in 1 second.");
+                System.out.println("[ServerStateReceiver] No connection to client: " + url + " on port: " + port + ". Reconnecting in 1 second.");
                 try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }
         }

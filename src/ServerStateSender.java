@@ -32,8 +32,7 @@ public class ServerStateSender extends Thread {
                     outputStream.write(serverStateMonitor.getModeBlocking());
                 }
             } catch (IOException e) {
-                System.out.println("[ServerStateSender] OutputStream closed. Reconnecting in 1 second.");
-                try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
+                System.out.println("[ServerStateSender] OutputStream closed. Reconnecting.");
             }
         }
     }

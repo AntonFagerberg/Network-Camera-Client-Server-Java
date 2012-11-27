@@ -18,13 +18,11 @@ public class ClientStateReceiver extends Thread {
     }
 
     public void run() {
-        Socket socket = null;
         InputStream inputStream;
         int mode;
 
         try {
-            socket = new Socket(url, port);
-            inputStream = socket.getInputStream();
+            inputStream = (new Socket(url, port)).getInputStream();
 
             while (true) {
                 mode = inputStream.read();
@@ -32,10 +30,10 @@ public class ClientStateReceiver extends Thread {
                     throw new IOException("Stream closed.");
                 }
                 clientStateMonitor.setMode(mode);
-                gui.changeMovieMode(mode, url);
+                gui.changeMovieMode(url);
             }
         } catch (IOException e) {
-            System.out.println("[ClientStateReceiver] No connection to client: " + url + " on port: " + port + ". Reconnecting in 1 second.");
+            System.out.println("[ClientStateReceiver] No connection to server: " + url + " on port: " + port + ". Reconnecting in 1 second.");
             try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
         }
     }

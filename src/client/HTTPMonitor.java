@@ -1,37 +1,26 @@
 package client;
 
 public class HTTPMonitor {
-	private byte[] image;
-	private boolean bool = false;
+	private byte[] JPEGData = new byte[1];
 
-	public synchronized void storeImage(byte[] image) {
-		System.out.println("StoreImage anropad med " + bool);
-		if(bool){
-			this.image = image;
-			bool = false;
-			notifyAll();
-			System.out.println("notifyAll() i storeImage");
-		}
-		
-	}
-	
-	public synchronized boolean checkState(){
-		return bool;
+	public synchronized void storeImage(byte[] JPEGData) {
+        if (this.JPEGData == null) {
+            this.JPEGData = JPEGData;
+            notify();
+        }
 	}
 	
 	public synchronized byte[] requestImage() {
-		System.out.println("requestImage() anropad");
-		bool = true;
-		while(bool){
-			try {
-				System.out.println("Går in i wait()");
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Returnerar bild i requestImage()");
-		return image;
-	}
+        JPEGData = null;
 
+        while (JPEGData == null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+		return JPEGData;
+	}
 }

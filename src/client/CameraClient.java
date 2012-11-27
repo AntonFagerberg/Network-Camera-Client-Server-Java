@@ -15,7 +15,6 @@ public class CameraClient extends Thread {
     private final static long SYNC_DELAY = 200;
 
 	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
-        
 		this.gui = gui;
         
 		try {

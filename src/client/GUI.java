@@ -69,8 +69,6 @@ public class GUI extends JFrame implements ActionListener {
 		cameraClient.start();
 		httpServer.start();
 
-		camera1 = "130.235.35.85";
-		camera2 = "130.235.35.85";
 		
 
 		

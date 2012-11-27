@@ -43,6 +43,9 @@ public class GUI extends JFrame implements ActionListener {
 	private ClientStateMonitor clientStateMonitor;
 	private CameraClient cameraClient;
 	private String camera1, camera2;
+	private JPanel panel_4;
+	private JButton btnConnect;
+	private JButton btnDisconnect;
 
 
 
@@ -53,11 +56,7 @@ public class GUI extends JFrame implements ActionListener {
 		//Starting up system
 		camera1 = "localhost";
 		camera2 = "localhost";
-		clientStateMonitor = new ClientStateMonitor();
-		cameraClient = new CameraClient(this,clientStateMonitor,
-             camera1, 6077, 6079, 6078,
-             camera2, 6080, 6082, 6081);
-		cameraClient.start();
+		
 		
 		
 		//Setting up gui
@@ -182,8 +181,11 @@ public class GUI extends JFrame implements ActionListener {
 		bgMode.add(rbIdle);
 		
 		rbMovie.addActionListener(this);
+		rbMovie.setActionCommand("radiobutton");
 		rbMovieAuto.addActionListener(this);
+		rbMovieAuto.setActionCommand("radiobutton");
 		rbIdle.addActionListener(this);
+		rbMovieAuto.setActionCommand("radiobutton");
 		
 		
 		
@@ -200,6 +202,21 @@ public class GUI extends JFrame implements ActionListener {
 				lblCurrentSyncMode.setBounds(448, 408, 328, 15);
 				contentPane.add(lblCurrentSyncMode);
 				
+				panel_4 = new JPanel();
+				panel_4.setBounds(448, 485, 328, 41);
+				contentPane.add(panel_4);
+				panel_4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+				
+				btnConnect = new JButton("Connect");
+				panel_4.add(btnConnect);
+				
+				btnDisconnect = new JButton("Do not push!!!");
+				panel_4.add(btnDisconnect);
+				
+				btnConnect.addActionListener(this);
+				btnConnect.setActionCommand("connect");
+				btnDisconnect.addActionListener(this);
+				btnDisconnect.setActionCommand("disconnect");
 				
 		panelActive.setVisible(false);
 
@@ -250,7 +267,18 @@ public class GUI extends JFrame implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		setModeInMonitor();
+		String str = e.getActionCommand();
+		if(str.equals("radiobutton")){
+			setModeInMonitor();
+		}else if(str.equals("connect")){
+			clientStateMonitor = new ClientStateMonitor();
+			cameraClient = new CameraClient(this,clientStateMonitor,
+	             camera1, 6077, 6079, 6078,
+	             camera2, 6080, 6082, 6081);
+			cameraClient.start();
+		}else if(str.equals("disconnect")){
+			cameraClient.alive = false;
+		}
 	}
 	
 	public void changeSyncLabel(int mode) {

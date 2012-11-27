@@ -13,9 +13,7 @@ public class ServerStateMonitor {
     public synchronized int getModeBlocking() {
         try {
             notify();
-            System.out.println("[" + System.currentTimeMillis() + "] Monitor: getModeBlocking() waiting: start.");
             wait();
-            System.out.println("[" + System.currentTimeMillis() + "] Monitor: getModeBlocking() waiting: done.");
         } catch (InterruptedException e) { e.printStackTrace(); }
 
         return getMode();
@@ -27,9 +25,7 @@ public class ServerStateMonitor {
                 mode = newMode;
                 try {
                     notify();
-                    System.out.println("[" + System.currentTimeMillis() + "] Monitor: setMode() waiting: start.");
                     wait();
-                    System.out.println("[" + System.currentTimeMillis() + "] Monitor: setMode() waiting: done.");
                 } catch (InterruptedException e) { e.printStackTrace(); }
             } else if ((newMode == IDLE && mode == MOVIE) || newMode == IDLE_FORCED || newMode == MOVIE_FORCED) {
                 mode = newMode;

@@ -254,11 +254,13 @@ public class GUI extends JFrame implements ActionListener {
 	public void setModeInMonitor() {
 		if (rbMovie.isSelected()) {
             clientStateMonitor.setMode(ClientStateMonitor.MOVIE_FORCED);
+            changeMovieMode(MOVIE, "User");
 		} else if (rbIdle.isSelected()) {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE_FORCED);
+            changeMovieMode(IDLE, "");
 		} else {
             clientStateMonitor.setMode(ClientStateMonitor.IDLE);
-            changeMovieMode(IDLE, "IDLE");
+            changeMovieMode(IDLE, "");
 		}
 	}
 
@@ -285,6 +287,7 @@ public class GUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String str = e.getActionCommand();
 		if(str.equals("radiobutton")){
+			System.out.println("tjohaej");
 			setModeInMonitor();
 		}else if(str.equals("connect")){
 			clientStateMonitor = new ClientStateMonitor();

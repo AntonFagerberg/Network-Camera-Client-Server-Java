@@ -13,11 +13,11 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 
 public class CameraServer extends Thread {
-    private ServerStateMonitor serverStateMonitor = new ServerStateMonitor();
-    private MotionDetector motionDetector = new MotionDetector();
+    private final ServerStateMonitor serverStateMonitor = new ServerStateMonitor();
+    private final MotionDetector motionDetector = new MotionDetector();
     private final static int WAIT_TIME = 5000;
-    private Axis211A camera;
-    private int port;
+    private final Axis211A camera;
+    private final int port;
 
     public CameraServer(int picturePort, int stateSendPort, String stateReceiveAddress, int stateReceivePort) {
         (new ServerStateReceiver(stateReceiveAddress, stateReceivePort, serverStateMonitor)).start();

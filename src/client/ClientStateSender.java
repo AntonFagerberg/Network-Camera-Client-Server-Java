@@ -5,9 +5,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 
 public class ClientStateSender extends Thread {
-    private ClientStateMonitor clientStateMonitor;
-    private int port;
-    public volatile boolean alive;
+    private final ClientStateMonitor clientStateMonitor;
+    private final int port;
 
     public ClientStateSender(int port, ClientStateMonitor clientStateMonitor) {
         this.clientStateMonitor = clientStateMonitor;

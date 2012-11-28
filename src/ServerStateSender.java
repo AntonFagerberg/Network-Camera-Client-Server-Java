@@ -3,8 +3,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 
 public class ServerStateSender extends Thread {
-    private ServerStateMonitor serverStateMonitor;
-    private int port;
+    private final ServerStateMonitor serverStateMonitor;
+    private final int port;
 
     public ServerStateSender(int port, ServerStateMonitor serverStateMonitor) {
         System.out.println("ServerStateSender: started.");

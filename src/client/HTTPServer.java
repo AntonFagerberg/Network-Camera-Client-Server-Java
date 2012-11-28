@@ -7,11 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HTTPServer extends Thread {
-	private int port;
+	private final int port;
 	private static final byte[] CRLF = { 13, 10 };
 	private byte[] jpeg;
 	private Socket clientSocket;
-	private HTTPMonitor httpMonitor;
+	private final HTTPMonitor httpMonitor;
 	private ServerSocket serverSocket;
 
 	public HTTPServer(int port, HTTPMonitor httpMonitor) {
@@ -120,9 +120,4 @@ public class HTTPServer extends Thread {
 		s.write(str.getBytes());
 		s.write(CRLF);
 	}
-	
-	public void generateImage(byte[] jpeg) {
-		this.jpeg = jpeg;
-	}
-
 }

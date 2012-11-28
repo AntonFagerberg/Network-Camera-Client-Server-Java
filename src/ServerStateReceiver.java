@@ -3,9 +3,9 @@ import java.io.InputStream;
 import java.net.Socket;
 
 public class ServerStateReceiver extends Thread {
-    ServerStateMonitor serverStateMonitor;
-    String url;
-    int port;
+    private final ServerStateMonitor serverStateMonitor;
+    private final String url;
+    private final int port;
 
     public ServerStateReceiver(String url, int port, ServerStateMonitor serverStateMonitor) {
         this.serverStateMonitor = serverStateMonitor;

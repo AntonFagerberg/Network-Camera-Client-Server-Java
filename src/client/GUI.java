@@ -251,7 +251,7 @@ public class GUI extends JFrame implements ActionListener {
 		}
 	}
 	public void changeMovieMode(String caller){
-		if (caller != "") {
+		if (!caller.equals("")) {
             panel1.setBorder(borderRedCam1);
             panel2.setBorder(borderRedCam2);
             lbActive.setText("Movie mode triggered by " + caller + ".");

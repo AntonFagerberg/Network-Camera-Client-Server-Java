@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.net.Socket;
 
 public class ClientStateReceiver extends Thread {
-    private ClientStateMonitor clientStateMonitor;
-    private String url;
-    private int port;
-    private GUI gui;
+    private final ClientStateMonitor clientStateMonitor;
+    private final String url;
+    private final int port;
+    private final GUI gui;
 
     public ClientStateReceiver(String url, int port, ClientStateMonitor clientStateMonitor, GUI gui) {
         this.url = url;

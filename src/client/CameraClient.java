@@ -7,22 +7,22 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class CameraClient extends Thread {
-    private GUI gui;
+    private final GUI gui;
 	private InputStream[] inputStreams;
-    private ArrayList<byte[]> JPEGData = new ArrayList<byte[]>(2){{
+    private final ArrayList<byte[]> JPEGData = new ArrayList<byte[]>(2){{
         add(new byte[0]);
         add(new byte[0]);
     }};
-    private byte[] JPEGDataSize = new byte[4];
-    private long[] timeStamps = new long[2];
+    private final byte[] JPEGDataSize = new byte[4];
+    private final long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
-    private HTTPMonitor httpMonitor;
-    private String
-        serverAddress1,
-        serverAddress2;
-    private int
-        serverPicturePort1,
-        serverPicturePort2;
+    private final HTTPMonitor httpMonitor;
+    private final String
+        serverAddress1;
+    private final String serverAddress2;
+    private final int
+        serverPicturePort1;
+    private final int serverPicturePort2;
 
 	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, HTTPMonitor httpMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
 		this.gui = gui;

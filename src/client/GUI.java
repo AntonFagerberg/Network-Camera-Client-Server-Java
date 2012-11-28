@@ -9,14 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUI extends JFrame implements ActionListener {
-    private String serverURL1, serverURL2;
     private ClientStateMonitor clientStateMonitor;
 	public final static int
         SYNC_AUTO = -1,
         SYNC_SYNC = 1,
-        SYNC_ASYNC = 0,
-		IDLE = 0,
-		MOVIE = 1;
+        SYNC_ASYNC = 0;
 
 
 	private JPanel 		contentPane,
@@ -47,8 +44,6 @@ public class GUI extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public GUI(String serverURL1, String serverURL2, ClientStateMonitor clientStateMonitor) {
-		this.serverURL1 = serverURL1;
-        this.serverURL2 = serverURL2;
         this.clientStateMonitor = clientStateMonitor;
 
 		//GUI Initialization

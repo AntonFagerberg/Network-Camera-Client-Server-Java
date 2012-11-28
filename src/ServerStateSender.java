@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 public class ServerStateSender extends Thread {

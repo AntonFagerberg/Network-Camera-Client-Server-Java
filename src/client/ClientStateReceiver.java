@@ -34,6 +34,7 @@ public class ClientStateReceiver extends Thread {
                     gui.changeMovieMode(url);
                 }
             } catch (IOException e) {
+                clientStateMonitor.setMode(ClientStateMonitor.MOVIE);
                 System.out.println("[ClientStateReceiver] No connection to server: " + url + " on port: " + port + ". Reconnecting in 1 second.");
                 try { sleep(1000); } catch (InterruptedException e1) { e1.printStackTrace(); }
             }

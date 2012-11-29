@@ -21,13 +21,13 @@ public class ServerStateMonitor {
 
     public synchronized void setMode(int newMode) {
         if (mode != newMode) {
-            if (newMode == MOVIE && mode == IDLE) {
+            if (newMode == MOVIE) {
                 mode = newMode;
                 try {
                     notify();
                     wait();
                 } catch (InterruptedException e) { e.printStackTrace(); }
-            } else if ((newMode == IDLE && mode == MOVIE) || newMode == IDLE_FORCED || newMode == MOVIE_FORCED) {
+            } else if (newMode == IDLE_FORCED || newMode == MOVIE_FORCED) {
                 mode = newMode;
             }
         }

@@ -25,8 +25,10 @@ public class ServerStateReceiver extends Thread {
                 while (true) {
                     switch (inputStream.read()) {
                         case ServerStateMonitor.IDLE:
-                        case ServerStateMonitor.MOVIE:
                             serverStateMonitor.unsetForcedMode();
+                            break;
+                        case ServerStateMonitor.MOVIE:
+                            serverStateMonitor.setMode(ServerStateMonitor.MOVIE_FORCED);
                             break;
                         case ServerStateMonitor.IDLE_FORCED:
                             serverStateMonitor.setMode(ServerStateMonitor.IDLE_FORCED);

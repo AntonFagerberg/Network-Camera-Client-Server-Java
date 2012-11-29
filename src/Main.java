@@ -4,8 +4,8 @@ import se.lth.cs.fakecamera.Axis211A;
 public class Main {
 	public static void main(String[] args) {
         String
-            clientURL1 = "192.168.255.218",
-            clientURL2 = "192.168.255.218",
+            clientURL1 = "localhost",
+            clientURL2 = "localhost",
             serverURL1 = "localhost",
             serverURL2 = "localhost";
         int

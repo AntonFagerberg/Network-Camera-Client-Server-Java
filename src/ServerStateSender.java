@@ -7,7 +7,6 @@ public class ServerStateSender extends Thread {
     private final int port;
 
     public ServerStateSender(int port, ServerStateMonitor serverStateMonitor) {
-        System.out.println("ServerStateSender: started.");
         this.serverStateMonitor = serverStateMonitor;
         this.port = port;
     }

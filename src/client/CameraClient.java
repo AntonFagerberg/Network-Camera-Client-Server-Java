@@ -17,12 +17,8 @@ public class CameraClient extends Thread {
     private final long[] timeStamps = new long[2];
     private final static long SYNC_DELAY = 200;
     private final HTTPMonitor httpMonitor;
-    private final String
-        serverAddress1;
-    private final String serverAddress2;
-    private final int
-        serverPicturePort1;
-    private final int serverPicturePort2;
+    private final String serverAddress1, serverAddress2;
+    private final int serverPicturePort1, serverPicturePort2;
 
 	public CameraClient(GUI gui, ClientStateMonitor clientStateMonitor, HTTPMonitor httpMonitor, String serverAddress1, int serverPicturePort1, int serverReceivePort1, int serverSendPort1, String serverAddress2, int serverPicturePort2, int serverReceivePort2, int serverSendPort2) {
 		this.gui = gui;
